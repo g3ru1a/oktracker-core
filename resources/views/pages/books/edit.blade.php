@@ -38,7 +38,7 @@
                         <div class="mt-2 flex">
                             <div class="w-1/3 mr-1">
                                 <x-jet-label for="publish_date" value="{{ __('Publish Date') }} ({{ __('Optional') }})" />
-                                <x-jet-input value="{{$book->publish_date}}" name="publish_date" placeholder="E.g. Seiso, Mark" type="date" class="mt-1 block w-full" autocomplete="publish_date" />
+                                <x-jet-input value="{{ Carbon\Carbon::parse($book->publish_date)->format('Y-m-d') }}" name="publish_date" placeholder="E.g. Seiso, Mark" type="date" class="mt-1 block w-full" autocomplete="publish_date" />
                                 <x-jet-input-error for="publish_date" class="mt-2" />
                             </div>
                             <div class="w-1/3 mx-1">
