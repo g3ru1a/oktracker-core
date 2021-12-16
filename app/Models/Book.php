@@ -15,8 +15,8 @@ class Book extends Model
         return $this->belongsTo(Series::class);
     }
 
-    // public function reports()
-    // {
-    //     return $this->morphOne(Report::class, 'item');
-    // }
+    public function reports()
+    {
+        return $this->morphOne(Report::class, 'item');
+    }
 }

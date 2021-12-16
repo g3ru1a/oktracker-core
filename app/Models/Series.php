@@ -17,8 +17,8 @@ class Series extends Model
         return $this->hasMany(Book::class);
     }
 
-    // public function reports()
-    // {
-    //     return $this->morphOne(Report::class, 'item');
-    // }
+    public function reports()
+    {
+        return $this->morphOne(Report::class, 'item');
+    }
 }

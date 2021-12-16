@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\BookController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SeriesController;
 use GuzzleHttp\Middleware;
 use Illuminate\Support\Facades\Route;
@@ -24,9 +25,8 @@ Route::middleware(['auth', 'verified'])->get('/dashboard', function () {
     return view('dashboard');
 })->name('dashboard');
 
-Route::middleware(['auth', 'verified'])->get('/reports', function (){
-    return view('reports');
-})->name('reports');
-
 Route::middleware(['auth', 'verified'])->resource('series', SeriesController::class);
 Route::middleware(['auth', 'verified'])->resource('book', BookController::class);
+
+Route::middleware(['auth', 'verified'])->get('/reports', [ReportController::class, 'index'])->name('reports.index');
+Route::middleware(['auth', 'verified'])->delete('/reports/{report}', [ReportController::class, 'destroy'])->name('reports.destroy');
