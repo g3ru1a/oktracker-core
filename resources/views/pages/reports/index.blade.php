@@ -47,7 +47,7 @@
                                             target="_blank"
                                             class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
                                                 {{ $r->item_type == 'App\Models\Book' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-900' }}">
-                                            @if(isset({{$r->item->title}})) {{$r->item->title}} @endif
+                                            @if(isset($r->item->title)) {{$r->item->title}} @endif
                                         </a>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
