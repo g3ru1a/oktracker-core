@@ -115,7 +115,13 @@
                                 class="w-full text-center py-3 bg-black text-white rounded-md">{{ __('Submit') }}</button>
                         </div>
                     </form>
-                    
+                    <div class="p-2">
+                        <form action="{{ route('book.destroy', ['book' => $book->id]) }}" method="POST">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="float-right text-red-600 hover:text-red-900">Delete</button>
+                        </form>
+                    </div>
                         @if($errors->any())
                             <div class="mt-2 rounded-md bg-red-400 px-4 py-2 text-white">
                                 {{ implode('', $errors->all(':message')) }}

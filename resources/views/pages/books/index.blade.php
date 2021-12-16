@@ -53,7 +53,7 @@
                                                 <div class="text-sm font-medium text-gray-900">
                                                     {{ $b->title }}
                                                 </div>
-                                                @if($b->series_id != null)
+                                                @if($b->series_id != null && isset($b->series->title))
                                                     <div class="text-sm text-gray-500">
                                                         Part of '{{$b->series->title}}'
                                                     </div>

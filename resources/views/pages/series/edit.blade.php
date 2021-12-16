@@ -13,13 +13,14 @@
                 description="This should be a list of pointers but I dont know what to write rn">
                 <x-slot name="content">
 
-                    <form action="{{ route('series.update', ['series' => $series->id]) }}" method="POST" enctype="multipart/form-data">
+                    <form action="{{ route('series.update', ['series' => $series->id]) }}" method="POST"
+                        enctype="multipart/form-data">
                         @csrf
                         @method('PUT')
                         <div class="">
                             <x-jet-label for="title" value="{{ __('Title') }}" />
                             <x-jet-input required name="title" placeholder="E.g. Monkey High" type="text"
-                                class="mt-1 block w-full" autocomplete="title" value="{{$series->title}}"/>
+                                class="mt-1 block w-full" autocomplete="title" value="{{ $series->title }}" />
                             <x-jet-input-error for="title" class="mt-2" />
                         </div>
 
@@ -27,21 +28,23 @@
                             <x-jet-label for="summary" value="{{ __('Summary') }} ({{ __('Optional') }})" />
                             <textarea name="summary" id="summary"
                                 placeholder="Lorem ipsum dolor sit amet, consectetur adipiscing elit. In ultrices nibh ut justo auctor mollis. Nulla varius consectetur nunc, sed dapibus diam."
-                                class="w-full placeholder:italic border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm"
-                                >{{$series->summary}}</textarea>
+                                class="w-full placeholder:italic border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm">{{ $series->summary }}</textarea>
                         </div>
 
                         <div class="mt-2 flex">
                             <div class="w-2/3 mr-1">
-                                <x-jet-label for="publisher" value="{{ __('Publisher') }} ({{ __('Optional') }})" />
+                                <x-jet-label for="publisher"
+                                    value="{{ __('Publisher') }} ({{ __('Optional') }})" />
                                 <x-jet-input name="publisher" placeholder="E.g. Kodansha" type="text"
-                                    class="mt-1 block w-full" autocomplete="publisher" value="{{$series->publisher}}" />
+                                    class="mt-1 block w-full" autocomplete="publisher"
+                                    value="{{ $series->publisher }}" />
                                 <x-jet-input-error for="publisher" class="mt-2" />
                             </div>
                             <div class="w-1/3 ml-1">
                                 <x-jet-label for="language" value="{{ __('Language') }}" />
                                 <x-jet-input required name="language" placeholder="E.g. en_US" type="text"
-                                    class="mt-1 block w-full" autocomplete="language" value="{{$series->language}}"/>
+                                    class="mt-1 block w-full" autocomplete="language"
+                                    value="{{ $series->language }}" />
                                 <x-jet-input-error for="language" class="mt-2" />
                             </div>
                         </div>
@@ -50,14 +53,15 @@
                             <div class="w-1/2 mr-1">
                                 <x-jet-label for="authors" value="{{ __('Authors') }} ({{ __('Optional') }})" />
                                 <x-jet-input name="authors" placeholder="E.g. Seiso, Mark" type="text"
-                                    class="mt-1 block w-full" autocomplete="authors" value="{{$series->authors}}" />
+                                    class="mt-1 block w-full" autocomplete="authors" value="{{ $series->authors }}" />
                                 <x-jet-input-error for="authors" class="mt-2" />
                             </div>
                             <div class="w-1/2 ml-1">
                                 <x-jet-label for="contributions"
                                     value="{{ __('Contributions') }} ({{ __('Optional') }})" />
                                 <x-jet-input name="contributions" placeholder="E.g. Natsume Akatsuki" type="text"
-                                    class="mt-1 block w-full" autocomplete="contributions" value="{{$series->contrubutions}}" />
+                                    class="mt-1 block w-full" autocomplete="contributions"
+                                    value="{{ $series->contrubutions }}" />
                                 <x-jet-input-error for="contributions" class="mt-2" />
                             </div>
                         </div>
@@ -68,12 +72,14 @@
                                 value="{{ __('Cover Photo') }} ({{ __('Optional') }})" />
                             <div onclick="openInput()"
                                 class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
-                                @if($series->cover_url != '/missing_cover.png')
-                                <img src="{{$series->cover_url}}" alt="preview" id="cover-preview" class="max-h-64">
+                                @if ($series->cover_url != '/missing_cover.png')
+                                    <img src="{{ $series->cover_url }}" alt="preview" id="cover-preview"
+                                        class="max-h-64">
                                 @else
-                                <img src="" alt="preview" id="cover-preview" class="hidden max-h-64">
+                                    <img src="" alt="preview" id="cover-preview" class="hidden max-h-64">
                                 @endif
-                                <div id="empty_file_input" class="space-y-1 text-center {{$series->cover_url != '/missing_cover.png' ? 'hidden' : null}}">
+                                <div id="empty_file_input"
+                                    class="space-y-1 text-center {{ $series->cover_url != '/missing_cover.png' ? 'hidden' : null }}">
                                     <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none"
                                         viewBox="0 0 48 48" aria-hidden="true">
                                         <path
@@ -84,7 +90,8 @@
                                         <label for="file-upload"
                                             class="relative cursor-pointer bg-white rounded-md font-medium text-indigo-600 hover:text-indigo-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500">
                                             <span>Upload a file</span>
-                                            <input id="file-upload" onchange="handleFiles()" name="cover" type="file" class="hidden sr-only">
+                                            <input id="file-upload" onchange="handleFiles()" name="cover" type="file"
+                                                class="hidden sr-only">
                                         </label>
                                         {{-- <p class="pl-1">or drag and drop</p> --}}
                                     </div>
@@ -100,7 +107,13 @@
                                 class="w-full text-center py-3 bg-black text-white rounded-md">{{ __('Submit') }}</button>
                         </div>
                     </form>
-
+                    <div class="p-2">
+                        <form action="{{ route('series.destroy', ['series' => $series->id]) }}" method="POST">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="float-right text-red-600 hover:text-red-900">Delete</button>
+                        </form>
+                    </div>
                 </x-slot>
             </x-jet-action-section>
         </div>
@@ -109,20 +122,20 @@
         const preview = document.getElementById('cover-preview');
         const file_input = document.getElementById('file-upload');
         const empty_file_input_data = document.getElementById('empty_file_input');
-    
-        function openInput(){
+
+        function openInput() {
             file_input.click();
         }
 
-        function handleFiles(){
+        function handleFiles() {
             let [file] = file_input.files;
-            if(file){
+            if (file) {
                 preview.src = URL.createObjectURL(file);
             }
             hideEmptyInputData();
         }
 
-        function hideEmptyInputData(){
+        function hideEmptyInputData() {
             empty_file_input_data.classList.add('hidden');
             preview.classList.remove('hidden');
         }
