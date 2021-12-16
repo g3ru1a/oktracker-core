@@ -42,9 +42,9 @@ class SeriesController extends Controller
         $series = Series::create($request->all());
         if($request->hasFile('cover')){
             $originalExtension = $request->file('cover')->getClientOriginalExtension();
-            $filename = bin2hex(random_bytes(20)).$originalExtension;
-            $path = $request->file('cover')->storeAs('public/series/covers', $filename);
-            $series->cover_url = '/'.$path;
+            $filename = 'cover'.$originalExtension;
+            $path = $request->file('cover')->storeAs('public/series/'.$series->title, $filename);
+            $series->cover_url = '/' . str_replace('public', 'storage', $path);
             $series->save();
         }
         return redirect(route('series.index'));
@@ -86,8 +86,13 @@ class SeriesController extends Controller
         $series->update($request->all());
         if ($request->hasFile('cover')) {
             $originalExtension = $request->file('cover')->getClientOriginalExtension();
-            $filename = bin2hex(random_bytes(20)) . $originalExtension;
-            $path = $request->file('cover')->storeAs('public/series/covers', $filename);
+
+            if (file_exists(public_path() . 'series/' . $series->title . '/cover'. $originalExtension)){
+                unlink(public_path() . 'series/' . $series->title . '/cover' . $originalExtension);
+            }
+
+            $filename = 'cover' . $originalExtension;
+            $path = $request->file('cover')->storeAs('public/series/'.$series->title, $filename);
             $series->cover_url = '/' . str_replace('public', 'storage', $path);
             $series->save();
         }

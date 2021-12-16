@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\BookController;
 use App\Http\Controllers\SeriesController;
+use GuzzleHttp\Middleware;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -27,3 +29,4 @@ Route::middleware(['auth', 'verified'])->get('/reports', function (){
 })->name('reports');
 
 Route::middleware(['auth', 'verified'])->resource('series', SeriesController::class);
+Route::middleware(['auth', 'verified'])->resource('book', BookController::class);
