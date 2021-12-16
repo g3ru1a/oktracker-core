@@ -53,9 +53,11 @@
                                                 <div class="text-sm font-medium text-gray-900">
                                                     {{ $b->title }}
                                                 </div>
-                                                {{-- <div class="text-sm text-gray-500">
-                                                    jane.cooper@example.com
-                                                </div> --}}
+                                                @if($b->series_id != null)
+                                                    <div class="text-sm text-gray-500">
+                                                        Part of '{{$b->series->title}}'
+                                                    </div>
+                                                @endif
                                             </div>
                                         </div>
                                     </td>

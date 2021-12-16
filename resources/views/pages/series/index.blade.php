@@ -46,9 +46,9 @@
                                                 <div class="text-sm font-medium text-gray-900">
                                                     {{$s->title}}
                                                 </div>
-                                                {{-- <div class="text-sm text-gray-500">
-                                                    jane.cooper@example.com
-                                                </div> --}}
+                                                <div class="text-sm text-gray-500">
+                                                    {{count($s->books)}} Book(s)
+                                                </div>
                                             </div>
                                         </div>
                                     </td>

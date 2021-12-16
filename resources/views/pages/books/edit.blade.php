@@ -55,6 +55,22 @@
 
                         <div class="mt-2 flex">
                             <div class="w-full ml-1">
+                                <x-jet-label for="series_id" value="{{ __('Series') }}" />
+                                <select name="series_id"
+                                    class="form-select appearance-none block w-full px-3 py-1.5 text-base font-normal text-gray-700
+                                        bg-white bg-clip-padding bg-no-repeat border border-solid border-gray-300
+                                        rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-black focus:outline-none"
+                                    aria-label="Default select example">
+                                    <option @if($book->series_id == null) selected @endif disabled>Select a Series</option>
+                                    @foreach($series as $s)
+                                    <option value="{{$s->id}}" @if($book->series_id == $s->id) selected @endif>{{$s->title}}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mt-2 flex">
+                            <div class="w-full ml-1">
                                 <x-jet-label for="oneshot" value="{{ __('Oneshot') }} ({{ __('Optional') }})" />
                                 <label class="inline-flex items-center mt-3">
                                     <input name="is_oneshot" type="checkbox" class="form-checkbox h-5 w-5 text-gray-600" @if($book->oneshot) checked @endif><span class="ml-2 text-gray-700">This is the only book in the series</span>

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\BookStoreRequest;
 use App\Models\Book;
+use App\Models\Series;
 use Illuminate\Http\Request;
 
 class BookController extends Controller
@@ -28,7 +29,10 @@ class BookController extends Controller
      */
     public function create()
     {
-        return view('pages.books.create');
+        $series = Series::all();
+        return view('pages.books.create', [
+            'series' => $series
+        ]);
     }
 
     /**
@@ -71,8 +75,10 @@ class BookController extends Controller
      */
     public function edit(Book $book)
     {
+        $series = Series::all();
         return view('pages.books.edit', [
-            'book' => $book
+            'book' => $book,
+            'series' => $series
         ]);
     }
 
