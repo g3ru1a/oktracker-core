@@ -59,7 +59,8 @@ class ISBNLookUpController extends Controller
             return false;
         }
         $data = json_decode($response->getBody());
-        $series = Series::where('title', 'like', '%'.$data->book->title_long.'%')->first();
+        $title = explode(' ', $data->book->title_long);
+        $series = Series::where('title', 'like', '%'.$title[0].'%')->first();
         if($series == null){
             $series = Series::create([
                 'title' => $data->book->title_long,
