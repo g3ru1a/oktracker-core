@@ -25,7 +25,13 @@ class SeriesStoreRequest extends FormRequest
     {
         return [
             'title' => 'required|string',
-            'language' => 'required|string'
+            'language' => 'required|string',
+            'cover_url' => 'string|nullable',
+            'publisher' => 'string|nullable',
+            'summary' => 'string|nullable',
+            'authors' => 'string|nullable',
+            'contributions' => 'string|nullable',
+            'cover' => 'image|nullable'
         ];
     }
 }

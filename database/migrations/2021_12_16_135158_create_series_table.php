@@ -17,6 +17,7 @@ class CreateSeriesTable extends Migration
             $table->id();
             $table->string('title');
             $table->string('language');
+            $table->string('cover_url')->default('/missing_cover.png');
             $table->string('publisher')->nullable();
             $table->longText('summary')->nullable();
             $table->json('authors')->nullable();

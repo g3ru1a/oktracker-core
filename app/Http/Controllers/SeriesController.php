@@ -15,7 +15,20 @@ class SeriesController extends Controller
      */
     public function index()
     {
-        return Series::all();
+        $series = Series::all()->take(15);
+        return view('pages.series.index', [
+            'series' => $series
+        ]);
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create()
+    {
+        return view('pages.series.create');
     }
 
     /**
@@ -26,51 +39,70 @@ class SeriesController extends Controller
      */
     public function store(SeriesStoreRequest $request)
     {
-        return Series::create($request->all());
+        $series = Series::create($request->all());
+        if($request->hasFile('cover')){
+            $originalExtension = $request->file('cover')->getClientOriginalExtension();
+            $filename = bin2hex(random_bytes(20)).$originalExtension;
+            $path = $request->file('cover')->storeAs('public/series/covers', $filename);
+            $series->cover_url = '/'.$path;
+            $series->save();
+        }
+        return redirect(route('series.index'));
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param  Series $series
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Series $series)
     {
-        return Series::find($id);
+        //
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  Series $series
+     * @return \Illuminate\Http\Response
+     */
+    public function edit(Series $series)
+    {
+        return view('pages.series.edit', [
+            'series' => $series
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param  Series $series
      * @return \Illuminate\Http\Response
      */
-    public function update(SeriesStoreRequest $request, $id)
+    public function update(SeriesStoreRequest $request, Series $series)
     {
-        return Series::find($id)->update($request->all());
+        $series->update($request->all());
+        if ($request->hasFile('cover')) {
+            $originalExtension = $request->file('cover')->getClientOriginalExtension();
+            $filename = bin2hex(random_bytes(20)) . $originalExtension;
+            $path = $request->file('cover')->storeAs('public/series/covers', $filename);
+            $series->cover_url = '/' . str_replace('public', 'storage', $path);
+            $series->save();
+        }
+        return redirect(route('series.index'));
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param  int $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Series $series)
     {
-        return Series::find($id)->delete();
-    }
-
-    /**
-     * Search for series by title
-     *
-     * @param  string  $title
-     * @return \Illuminate\Http\Response
-     */
-    public function search($title)
-    {
-        return Series::where('title', 'like', '%'. $title.'%')->get();
+        $series->delete();
+        return redirect(route('series.index'));
     }
 }
