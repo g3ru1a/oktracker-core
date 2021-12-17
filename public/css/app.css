@@ -1175,6 +1175,12 @@ select {
 .w-2\/4 {
   width: 50%;
 }
+.w-2\/5 {
+  width: 40%;
+}
+.w-1\/5 {
+  width: 20%;
+}
 .min-w-0 {
   min-width: 0px;
 }
