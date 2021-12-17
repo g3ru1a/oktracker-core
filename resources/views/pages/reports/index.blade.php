@@ -43,11 +43,11 @@
                                         </div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <a  href="{{ $r->item_type == 'App\Models\Book' ? route('book.edit', ['book' => $r->item_id]) : route('series.edit', ['series' => $r->item_id]) }}"
+                                        <a href="{{ $r->item_type == 'App\Models\Book' ? route('book.edit', ['book' => $r->item_id]) : route('series.edit', ['series' => $r->item_id]) }}"
                                             target="_blank"
                                             class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
                                                 {{ $r->item_type == 'App\Models\Book' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-900' }}">
-                                            @if(isset($r->item->title)) {{$r->item->title}} @endif
+                                            @if (isset($r->item->title)) {{ $r->item->title }} @endif
                                         </a>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -63,6 +63,9 @@
                             @endforeach
                         </tbody>
                     </table>
+                    <div class="p-2 bg-gray-100 w-full flex items-center justify-center">
+                        {{ $reports->links() }}
+                    </div>
                 </div>
             </div>
         </div>

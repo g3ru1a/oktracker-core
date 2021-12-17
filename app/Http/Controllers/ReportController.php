@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 class ReportController extends Controller
 {
     public function index(){
-        $reports = Report::all()->take(15);
+        $reports = Report::paginate(15);
         return view('pages.reports.index', [
             'reports' => $reports
         ]);
