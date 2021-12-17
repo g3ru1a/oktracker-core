@@ -32,17 +32,17 @@
                         <tbody class="bg-white divide-y divide-gray-200">
                             @foreach ($reports as $r)
                                 <tr class="">
-                                    <td class="px-6 py-4 whitespace-wrap">
+                                    <td class="px-6 py-4 whitespace-wrap w-2/5">
                                         <div class="text-sm font-medium text-gray-900">
                                             {{ $r->title }}
                                         </div>
                                     </td>
-                                    <td class="px-6 py-4 whitespace-wrap">
+                                    <td class="px-6 py-4 whitespace-wrap w-1/5">
                                         <div class="text-sm font-medium text-gray-900">
                                             {{ $r->details }}
                                         </div>
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
+                                    <td class="px-6 py-4 whitespace-nowrap w-1/5">
                                         <a href="{{ $r->item_type == 'App\Models\Book' ? route('book.edit', ['book' => $r->item_id]) : route('series.edit', ['series' => $r->item_id]) }}"
                                             target="_blank"
                                             class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
@@ -50,7 +50,7 @@
                                             @if (isset($r->item->title)) {{ $r->item->title }} @endif
                                         </a>
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 w-1/5">
                                         <form action="{{ route('reports.destroy', ['report' => $r->id]) }}"
                                             method="POST">
                                             @csrf
