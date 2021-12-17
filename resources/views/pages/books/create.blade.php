@@ -61,9 +61,9 @@
                         </div>
 
                         <div class="mt-2 flex">
-                            <div class="w-full ml-1">
+                            <div class="w-1/2 ml-1">
                                 <x-jet-label for="series_id" value="{{ __('Series') }}" />
-                                <select
+                                <select name="series_id"
                                     class="form-select appearance-none block w-full px-3 py-1.5 text-base font-normal text-gray-700
                                         bg-white bg-clip-padding bg-no-repeat border border-solid border-gray-300
                                         rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-black focus:outline-none"
@@ -72,6 +72,18 @@
                                     @foreach($series as $s)
                                     <option value="{{$s->id}}">{{$s->title}}</option>
                                     @endforeach
+                                </select>
+                            </div>
+                            <div class="w-1/2 ml-1">
+                                <x-jet-label for="format" value="{{ __('Format') }}" />
+                                <select name="format"
+                                    class="form-select appearance-none block w-full px-3 py-1.5 text-base font-normal text-gray-700
+                                        bg-white bg-clip-padding bg-no-repeat border border-solid border-gray-300
+                                        rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-black focus:outline-none"
+                                    aria-label="Default select example">
+                                    <option value="paperback">Paperback</option>
+                                    <option value="hardback">Hardback</option>
+                                    <option value="special">Special</option>
                                 </select>
                             </div>
                         </div>

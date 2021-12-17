@@ -32,7 +32,7 @@
                         </div>
 
                         <div class="mt-2 flex">
-                            <div class="w-2/3 mr-1">
+                            <div class="w-1/4 mr-1">
                                 <x-jet-label for="publisher"
                                     value="{{ __('Publisher') }} ({{ __('Optional') }})" />
                                 <x-jet-input name="publisher" placeholder="E.g. Kodansha" type="text"
@@ -40,12 +40,15 @@
                                     value="{{ $series->publisher }}" />
                                 <x-jet-input-error for="publisher" class="mt-2" />
                             </div>
-                            <div class="w-1/3 ml-1">
+                            <div class="w-1/4 ml-1">
                                 <x-jet-label for="language" value="{{ __('Language') }}" />
                                 <x-jet-input required name="language" placeholder="E.g. en_US" type="text"
                                     class="mt-1 block w-full" autocomplete="language"
                                     value="{{ $series->language }}" />
                                 <x-jet-input-error for="language" class="mt-2" />
+                            </div>
+                            <div class="w-2/4 ml-1">
+                                <livewire:book-kind-selector givenKind="{{$series->kind}}"/>
                             </div>
                         </div>
 
@@ -53,7 +56,8 @@
                             <div class="w-1/2 mr-1">
                                 <x-jet-label for="authors" value="{{ __('Authors') }} ({{ __('Optional') }})" />
                                 <x-jet-input name="authors" placeholder="E.g. Seiso, Mark" type="text"
-                                    class="mt-1 block w-full" autocomplete="authors" value="{{ $series->authors }}" />
+                                    class="mt-1 block w-full" autocomplete="authors"
+                                    value="{{ $series->authors }}" />
                                 <x-jet-input-error for="authors" class="mt-2" />
                             </div>
                             <div class="w-1/2 ml-1">

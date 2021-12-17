@@ -16,10 +16,7 @@ class BookController extends Controller
      */
     public function index()
     {
-        $books = Book::all()->take(15);
-        return view('pages.books.index', [
-            'books' => $books
-        ]);
+        return view('pages.books.index');
     }
 
     /**

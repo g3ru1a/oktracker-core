@@ -54,7 +54,7 @@
                         </div>
 
                         <div class="mt-2 flex">
-                            <div class="w-full ml-1">
+                            <div class="w-1/2 ml-1">
                                 <x-jet-label for="series_id" value="{{ __('Series') }}" />
                                 <select name="series_id"
                                     class="form-select appearance-none block w-full px-3 py-1.5 text-base font-normal text-gray-700
@@ -65,6 +65,18 @@
                                     @foreach($series as $s)
                                     <option value="{{$s->id}}" @if($book->series_id == $s->id) selected @endif>{{$s->title}}</option>
                                     @endforeach
+                                </select>
+                            </div>
+                            <div class="w-1/2 ml-1">
+                                <x-jet-label for="format" value="{{ __('Format') }}" />
+                                <select name="format"
+                                    class="form-select appearance-none block w-full px-3 py-1.5 text-base font-normal text-gray-700
+                                        bg-white bg-clip-padding bg-no-repeat border border-solid border-gray-300
+                                        rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-black focus:outline-none"
+                                    aria-label="Default select example">
+                                    <option value="paperback" @if($book->format == 'paperback') selected @endif>Paperback</option>
+                                    <option value="hardback" @if($book->format == 'hardback') selected @endif>Hardback</option>
+                                    <option value="special" @if($book->format == 'special') selected @endif>Special</option>
                                 </select>
                             </div>
                         </div>

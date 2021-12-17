@@ -15,10 +15,7 @@ class SeriesController extends Controller
      */
     public function index()
     {
-        $series = Series::all()->take(15);
-        return view('pages.series.index', [
-            'series' => $series
-        ]);
+        return view('pages.series.index');
     }
 
     /**

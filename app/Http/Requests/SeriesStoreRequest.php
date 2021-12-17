@@ -30,6 +30,7 @@ class SeriesStoreRequest extends FormRequest
             'publisher' => 'string|nullable',
             'summary' => 'string|nullable',
             'authors' => 'string|nullable',
+            'kind' => 'string|nullable',
             'contributions' => 'string|nullable',
             'cover' => 'image|nullable'
         ];
