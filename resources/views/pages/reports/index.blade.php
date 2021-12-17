@@ -42,7 +42,7 @@
                                             {{ $r->details }}
                                         </div>
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap w-1/5">
+                                    <td class="px-6 py-4 whitespace-wrap w-1/5">
                                         <a href="{{ $r->item_type == 'App\Models\Book' ? route('book.edit', ['book' => $r->item_id]) : route('series.edit', ['series' => $r->item_id]) }}"
                                             target="_blank"
                                             class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
