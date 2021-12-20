@@ -1,4 +1,5 @@
 <x-app-layout>
+    @section('title', 'Create Series')
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             <a href="{{route('series.index')}}" class="font-normal cursor-pointer hover:underline">{{ __('Series') }}</a> / {{ __('Create') }}
