@@ -40,7 +40,7 @@ class SeriesController extends Controller
         if($request->hasFile('cover')){
             $originalExtension = $request->file('cover')->getClientOriginalExtension();
             $filename = 'cover'.$originalExtension;
-            $path = $request->file('cover')->storeAs('public/series/'.$series->title, $filename);
+            $path = $request->file('cover')->storeAs('public/series/'.$series->id, $filename);
             $series->cover_url = '/' . str_replace('public', 'storage', $path);
             $series->save();
         }
@@ -84,12 +84,12 @@ class SeriesController extends Controller
         if ($request->hasFile('cover')) {
             $originalExtension = $request->file('cover')->getClientOriginalExtension();
 
-            if (file_exists(public_path() . 'series/' . $series->title . '/cover'. $originalExtension)){
-                unlink(public_path() . 'series/' . $series->title . '/cover' . $originalExtension);
+            if (file_exists(public_path() . 'series/' . $series->id . '/cover'. $originalExtension)){
+                unlink(public_path() . 'series/' . $series->id . '/cover' . $originalExtension);
             }
 
             $filename = 'cover' . $originalExtension;
-            $path = $request->file('cover')->storeAs('public/series/'.$series->title, $filename);
+            $path = $request->file('cover')->storeAs('public/series/'.$series->id, $filename);
             $series->cover_url = '/' . str_replace('public', 'storage', $path);
             $series->save();
         }

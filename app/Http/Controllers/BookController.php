@@ -46,7 +46,7 @@ class BookController extends Controller
         if ($request->hasFile('cover')) {
             $originalExtension = $request->file('cover')->getClientOriginalExtension();
             $filename = 'cover'. $originalExtension;
-            $path = $request->file('cover')->storeAs('public/books/'.$book->title, $filename);
+            $path = $request->file('cover')->storeAs('public/books/'.$book->id, $filename);
             $book->cover_url = '/' . str_replace('public', 'storage', $path);
             $book->save();
         }
@@ -95,12 +95,12 @@ class BookController extends Controller
         if ($request->hasFile('cover')) {
             $originalExtension = $request->file('cover')->getClientOriginalExtension();
 
-            if (file_exists(public_path() . 'books/' . $book->title . '/cover' . $originalExtension)) {
-                unlink(public_path() . 'books/' . $book->title . '/cover' . $originalExtension);
+            if (file_exists(public_path() . 'books/' . $book->id . '/cover' . $originalExtension)) {
+                unlink(public_path() . 'books/' . $book->id . '/cover' . $originalExtension);
             }
 
             $filename = 'cover' . $originalExtension;
-            $path = $request->file('cover')->storeAs('public/books/' . $book->title, $filename);
+            $path = $request->file('cover')->storeAs('public/books/' . $book->id, $filename);
             $book->cover_url = '/' . str_replace('public', 'storage', $path);
             $book->save();
         }
