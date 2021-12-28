@@ -21,12 +21,17 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::middleware(['auth', 'verified'])->get('/dashboard', function () {
-    return view('dashboard');
-})->name('dashboard');
+Route::prefix('/mm')->middleware(['auth', 'verified'])->group(function(){
+    Route::get('/dashboard', function () {
+        return view('dashboard');
+    })->name('dashboard');
 
-Route::middleware(['auth', 'verified'])->resource('series', SeriesController::class);
-Route::middleware(['auth', 'verified'])->resource('book', BookController::class);
+    Route::resource('series', SeriesController::class);
+    Route::resource('book', BookController::class);
 
-Route::middleware(['auth', 'verified'])->get('/reports', [ReportController::class, 'index'])->name('reports.index');
-Route::middleware(['auth', 'verified'])->delete('/reports/{report}', [ReportController::class, 'destroy'])->name('reports.destroy');
+    Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
+    Route::get('/reports/batch/{batch_size}', [ReportController::class, 'take_batch'])->name('reports.take_batch');
+    Route::put('/reports/{report}', [ReportController::class, 'complete'])->name('reports.complete');
+    Route::delete('/reports/{report}', [ReportController::class, 'destroy'])->name('reports.destroy');
+    Route::delete('/reports/assignee/{report}', [ReportController::class, 'remove_assignee'])->name('reports.remove_assignee');
+});

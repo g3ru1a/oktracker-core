@@ -15,7 +15,13 @@ module.exports = {
             },
         },
     },
-
+    purge: [
+        //CONFIGURE CORRECTLY
+        "./storage/framework/views/*.php",
+        "./resources/**/*.blade.php",
+        "./resources/**/*.js",
+        "./config/*.php",
+    ],
     plugins: [
         require("@tailwindcss/forms"),
         require("@tailwindcss/typography"),

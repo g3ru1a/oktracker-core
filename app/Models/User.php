@@ -58,4 +58,17 @@ class User extends Authenticatable
     protected $appends = [
         'profile_photo_url',
     ];
+
+    public function role(){
+        return $this->belongsTo(Role::class);
+    }
+
+    public function reports(){
+        return $this->hasMany(Report::class, 'assignee_id');
+    }
+
+    public function unfinishedReports()
+    {
+        return $this->hasMany(Report::class, 'assignee_id')->where('completed', false);
+    }
 }

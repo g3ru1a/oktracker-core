@@ -16,6 +16,8 @@ class BookController extends Controller
      */
     public function index()
     {
+        $this->authorize('view_list', Book::class);
+
         return view('pages.books.index');
     }
 
@@ -26,6 +28,8 @@ class BookController extends Controller
      */
     public function create()
     {
+        $this->authorize('view_create', Book::class);
+
         $series = Series::all();
         return view('pages.books.create', [
             'series' => $series
@@ -40,6 +44,8 @@ class BookController extends Controller
      */
     public function store(BookStoreRequest $request)
     {
+        $this->authorize('create', Book::class);
+
         $book = Book::create($request->all());
         $book->oneshot = $request->is_oneshot == 'on';
         $book->save();
@@ -72,6 +78,8 @@ class BookController extends Controller
      */
     public function edit(Book $book)
     {
+        $this->authorize('view_edit', Book::class);
+
         $series = Series::all();
         return view('pages.books.edit', [
             'book' => $book,
@@ -88,6 +96,8 @@ class BookController extends Controller
      */
     public function update(BookStoreRequest $request, Book $book)
     {
+        $this->authorize('update', Book::class);
+
         $book->update($request->all());
         $book->oneshot = $request->is_oneshot == 'on';
         $book->save();
@@ -115,6 +125,8 @@ class BookController extends Controller
      */
     public function destroy(Book $book)
     {
+        $this->authorize('destroy', Book::class);
+
         $book->delete();
         return redirect(route('book.index'));
     }

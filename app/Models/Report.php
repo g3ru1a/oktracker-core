@@ -16,4 +16,8 @@ class Report extends Model
     {
         return $this->morphTo();
     }
+
+    public function assignee(){
+        return $this->belongsTo(User::class, 'assignee_id');
+    }
 }
