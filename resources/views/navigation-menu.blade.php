@@ -32,8 +32,8 @@
                     </x-jet-nav-link>
                 </div>
                 <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                    <x-jet-nav-link href="{{ route('series.index') }}" :active="request()->routeIs('users.*')">
-                        {{ __('Users') }}
+                    <x-jet-nav-link href="{{ route('bookvendors.index') }}" :active="request()->routeIs('bookvendors.*')">
+                        {{ __('Vendors') }}
                     </x-jet-nav-link>
                 </div>
             </div>
