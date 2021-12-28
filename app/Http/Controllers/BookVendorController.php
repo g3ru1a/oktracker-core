@@ -4,10 +4,30 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\BookVendorRequest;
 use App\Models\BookVendor;
+use App\Models\Report;
 use Illuminate\Http\Request;
 
 class BookVendorController extends Controller
 {
+
+    //**API FUNCTIONS */
+
+    public function getAll(){
+        return response()->json(BookVendor::where('public', true)->get(), 200);
+    }
+
+    public function suggest(BookVendorRequest $request){
+        $request->public = false;
+        $bookvendor = BookVendor::create($request->all());
+        $r = new Report();
+        $r->title = 'Validate new Book Vendor: ' . $bookvendor->name;
+        $r->details = 'Submitted by '.auth()->user()->name;
+        $bookvendor->reports()->save($r);
+        return response()->json(['message' => 'Book Vendor Request successfull'], 201);
+    }
+
+    //**w/API FUNCTIONS */
+
     /**
      * Display a listing of the resource.
      *

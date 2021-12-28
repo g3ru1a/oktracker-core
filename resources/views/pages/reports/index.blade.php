@@ -98,12 +98,30 @@
                                         </div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-wrap w-1/5">
-                                        <a href="{{ $r->item_type == 'App\Models\Book' ? route('book.edit', ['book' => $r->item_id]) : route('series.edit', ['series' => $r->item_id]) }}"
-                                            target="_blank"
-                                            class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-md 
-                                                {{ $r->item_type == 'App\Models\Book' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-900' }}">
-                                            @if (isset($r->item->title)) {{ $r->item->title }} @endif
-                                        </a>
+                                        @switch($r->item_type)
+                                            @case('App\Models\Book')
+                                                <a href="{{ route('book.edit', ['book' => $r->item_id]) }}"
+                                                    target="_blank"
+                                                    class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-md bg-green-100 text-green-800">
+                                                    @if (isset($r->item->title)) {{ $r->item->title }} @endif
+                                                </a>
+                                                @break
+                                            @case('App\Models\Series')
+                                                <a href="{{ route('series.edit', ['series' => $r->item_id]) }}"
+                                                    target="_blank"
+                                                    class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-md bg-blue-100 text-blue-900">
+                                                    @if (isset($r->item->title)) {{ $r->item->title }} @endif
+                                                </a>
+                                                @break
+                                            @case('App\Models\BookVendor')
+                                                <a href="{{ route('bookvendors.edit', ['bookvendor' => $r->item_id]) }}"
+                                                    target="_blank"
+                                                    class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-md bg-blue-100 text-blue-900">
+                                                    @if (isset($r->item->name)) {{ $r->item->name }} @endif
+                                                </a>
+                                                @break
+                                            @default
+                                        @endswitch
                                     </td>
                                     @can('view_assignee', \App\Models\Report::class)
                                         <td class="px-6 py-4 whitespace-wrap w-2/5">
