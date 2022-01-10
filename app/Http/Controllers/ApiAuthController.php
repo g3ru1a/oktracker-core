@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Hash;
 
 class ApiAuthController extends Controller
 {
+
     public function register(Request $request){
         $fields = $request->validate([
             'name' => 'required|string',

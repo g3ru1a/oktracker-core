@@ -71,4 +71,8 @@ class User extends Authenticatable
     {
         return $this->hasMany(Report::class, 'assignee_id')->where('completed', false);
     }
+
+    public function collections(){
+        return $this->hasMany(Collection::class);
+    }
 }

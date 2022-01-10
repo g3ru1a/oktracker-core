@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ApiAuthController;
 use App\Http\Controllers\BookVendorController;
+use App\Http\Controllers\CollectionController;
 use App\Http\Controllers\ISBNLookUpController;
 use App\Http\Controllers\SeriesController;
 use Illuminate\Http\Request;
@@ -32,3 +33,10 @@ Route::get('/isbn/{isbn}', [ISBNLookUpController::class, 'lookup']);
 
 Route::get('/vendors', [BookVendorController::class, 'getAll']);
 Route::middleware('auth:sanctum')->post('/vendors/suggest', [BookVendorController::class, 'suggest']);
+
+Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'collection'], function() {
+    Route::get('/find/{collection}', [CollectionController::class, 'find']);
+    Route::post('/add', [CollectionController::class, 'store']);
+    Route::post('/update/{collection}', [CollectionController::class, 'update']);
+    Route::post('/destroy/{collection}', [CollectionController::class, 'destroy']);
+});
