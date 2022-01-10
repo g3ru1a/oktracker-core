@@ -3,12 +3,24 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\BookStoreRequest;
+use App\Http\Resources\BookResource;
 use App\Models\Book;
 use App\Models\Series;
 use Illuminate\Http\Request;
 
 class BookController extends Controller
 {
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function find(Book $book)
+    {
+        return BookResource::make($book);
+    }
+
     /**
      * Display a listing of the resource.
      *

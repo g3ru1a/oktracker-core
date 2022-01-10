@@ -161,6 +161,43 @@ namespace App\Models{
 
 namespace App\Models{
 /**
+ * App\Models\Item
+ *
+ * @property int $id
+ * @property int $book_id
+ * @property int $collection_id
+ * @property int $vendor_id
+ * @property float $price
+ * @property string $bought_on
+ * @property int $arrived
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \App\Models\Book|null $book
+ * @property-read \App\Models\Collection|null $collection
+ * @property-read \App\Models\BookVendor|null $vendor
+ * @method static \Illuminate\Database\Eloquent\Builder|Item newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Item newQuery()
+ * @method static \Illuminate\Database\Query\Builder|Item onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|Item query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Item whereArrived($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Item whereBookId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Item whereBoughtOn($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Item whereCollectionId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Item whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Item whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Item whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Item wherePrice($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Item whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Item whereVendorId($value)
+ * @method static \Illuminate\Database\Query\Builder|Item withTrashed()
+ * @method static \Illuminate\Database\Query\Builder|Item withoutTrashed()
+ */
+	class Item extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
  * App\Models\Report
  *
  * @property int $id

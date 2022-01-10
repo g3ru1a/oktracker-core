@@ -1,9 +1,11 @@
 <?php
 
 use App\Http\Controllers\ApiAuthController;
+use App\Http\Controllers\BookController;
 use App\Http\Controllers\BookVendorController;
 use App\Http\Controllers\CollectionController;
 use App\Http\Controllers\ISBNLookUpController;
+use App\Http\Controllers\ItemController;
 use App\Http\Controllers\SeriesController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -34,9 +36,19 @@ Route::get('/isbn/{isbn}', [ISBNLookUpController::class, 'lookup']);
 Route::get('/vendors', [BookVendorController::class, 'getAll']);
 Route::middleware('auth:sanctum')->post('/vendors/suggest', [BookVendorController::class, 'suggest']);
 
+Route::get('/book/{book}', [BookController::class, 'find']);
+
 Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'collection'], function() {
     Route::get('/find/{collection}', [CollectionController::class, 'find']);
+    Route::get('/items/{collection}', [CollectionController::class, 'items']);
     Route::post('/add', [CollectionController::class, 'store']);
     Route::post('/update/{collection}', [CollectionController::class, 'update']);
     Route::post('/destroy/{collection}', [CollectionController::class, 'destroy']);
+});
+
+Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'item'], function () {
+    Route::get('/find/{item}', [ItemController::class, 'find']);
+    Route::post('/add', [ItemController::class, 'store']);
+    Route::post('/update/{item}', [ItemController::class, 'update']);
+    Route::post('/destroy/{item}', [ItemController::class, 'destroy']);
 });

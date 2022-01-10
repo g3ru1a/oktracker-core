@@ -4,12 +4,20 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CollectionRequest;
 use App\Http\Resources\CollectionResource;
+use App\Http\Resources\ItemResourceShort;
 use App\Models\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class CollectionController extends Controller
 {
+
+    public function items(Collection $collection){
+        if ($collection->user->id == auth()->user()->id) {
+            return ItemResourceShort::collection($collection->items);
+        } else return response()->json(['message' => 'Cannot access this resource.'], 401);
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -31,9 +39,6 @@ class CollectionController extends Controller
     public function store(CollectionRequest $request)
     {
         try {
-            // if(isset($request->total_books)) $request->total_books = 0;
-            // if (is_null($request->total_cost)) $request->total_cost = 0;
-            // if (is_null($request->currency)) $request->currency = 'USD';
             $collection = Collection::create($request->all());
             Auth::user()->collections()->save($collection);
             $collection->refresh();
