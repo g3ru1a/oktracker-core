@@ -12,6 +12,12 @@ use Illuminate\Support\Facades\Auth;
 class CollectionController extends Controller
 {
 
+    public function list()
+    {
+        return CollectionResource::collection(auth()->user()->collections);
+    }
+
+
     public function items(Collection $collection){
         if ($collection->user->id == auth()->user()->id) {
             return ItemResourceShort::collection($collection->items);

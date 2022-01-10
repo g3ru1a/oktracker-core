@@ -39,6 +39,7 @@ Route::middleware('auth:sanctum')->post('/vendors/suggest', [BookVendorControlle
 Route::get('/book/{book}', [BookController::class, 'find']);
 
 Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'collection'], function() {
+    Route::get('/list', [CollectionController::class, 'list']);
     Route::get('/find/{collection}', [CollectionController::class, 'find']);
     Route::get('/items/{collection}', [CollectionController::class, 'items']);
     Route::post('/add', [CollectionController::class, 'store']);
