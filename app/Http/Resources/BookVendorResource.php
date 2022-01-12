@@ -17,6 +17,7 @@ class BookVendorResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
+            'logo' => $this->path_to_logo
         ];
     }
 }
