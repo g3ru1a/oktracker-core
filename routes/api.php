@@ -28,6 +28,9 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::group(['prefix' => 'auth'], function (){
     Route::post('/register', [ApiAuthController::class, 'register']);
     Route::post('/login', [ApiAuthController::class, 'login']);
+    Route::get('/verify/{user}/{token}', [ApiAuthController::class, 'verifyEmail']);
+    Route::post('/reset/request', [ApiAuthController::class, 'resetPasswordRequest']);
+    Route::post('/reset-password', [ApiAuthController::class, 'resetPassword']);
     Route::middleware('auth:sanctum')->post('/logout', [ApiAuthController::class, 'logout']); 
 });
 
