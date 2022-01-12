@@ -81,7 +81,7 @@ class ApiAuthController extends Controller
                 $user->remember_token = null;
                 $user->save();
                 Mail::mailer()->to($user->email)->send(new PasswordResetNotif($user));
-                return response()->json(["message" => "reset password email sent"], 200);
+                return response()->json(["message" => "password reset successfully"], 200);
             }
             return response()->json("Token doesn't match", 422);
         } else {
