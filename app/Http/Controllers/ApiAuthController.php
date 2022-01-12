@@ -31,10 +31,8 @@ class ApiAuthController extends Controller
             'remember_token' => $email_token,
         ]);
 
-        $token = $user->createToken('myapptoken')->plainTextToken;
         $response = [
             'user' => $user,
-            'token' => $token
         ];
 
         Mail::mailer()->to($user->email)->send(new ConfirmEmail($user));
@@ -100,6 +98,10 @@ class ApiAuthController extends Controller
 
         if(!$user || !Hash::check($fields['password'], $user->password)){
             return response(['message' => 'Bad Credentials.'], 401);
+        }
+
+        if($user->email_verified_at == null){
+            return response(["errors" => ["email" => ["Email hasn't been verified."]]], 422);
         }
 
         $token = $user->createToken(env('APP_KEY'))->plainTextToken;
