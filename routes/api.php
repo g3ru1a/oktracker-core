@@ -7,6 +7,7 @@ use App\Http\Controllers\CollectionController;
 use App\Http\Controllers\ISBNLookUpController;
 use App\Http\Controllers\ItemController;
 use App\Http\Controllers\SeriesController;
+use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -31,7 +32,15 @@ Route::group(['prefix' => 'auth'], function (){
     Route::get('/verify/{user}/{token}', [ApiAuthController::class, 'verifyEmail']);
     Route::post('/reset/request', [ApiAuthController::class, 'resetPasswordRequest']);
     Route::post('/reset-password', [ApiAuthController::class, 'resetPassword']);
-    Route::middleware('auth:sanctum')->post('/logout', [ApiAuthController::class, 'logout']); 
+
+    Route::get('/email-change/{user}/{email_crypted}/{token}', [UserController::class, 'changeEmailConfirm']);
+    Route::group(['middleware' => 'auth:sanctum'], function(){
+
+        Route::post('/email-change', [UserController::class, 'changeEmail']);
+        Route::post('/change-password', [UserController::class, 'changePassword']);
+        Route::post('/change-info', [UserController::class, 'update']); 
+        Route::post('/logout', [ApiAuthController::class, 'logout']); 
+    });
 });
 
 Route::get('/isbn/{isbn}', [ISBNLookUpController::class, 'lookup']);

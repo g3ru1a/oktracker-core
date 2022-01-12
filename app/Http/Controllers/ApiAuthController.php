@@ -102,7 +102,7 @@ class ApiAuthController extends Controller
             return response(['message' => 'Bad Credentials.'], 401);
         }
 
-        $token = $user->createToken('myapptoken')->plainTextToken;
+        $token = $user->createToken(env('APP_KEY'))->plainTextToken;
         $response = [
             'user' => $user,
             'token' => $token
