@@ -80,6 +80,7 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property string $path_to_logo
  * @property-read \App\Models\Report|null $reports
  * @method static \Illuminate\Database\Eloquent\Builder|BookVendor newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|BookVendor newQuery()
@@ -89,6 +90,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|BookVendor whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|BookVendor whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|BookVendor whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|BookVendor wherePathToLogo($value)
  * @method static \Illuminate\Database\Eloquent\Builder|BookVendor wherePublic($value)
  * @method static \Illuminate\Database\Eloquent\Builder|BookVendor whereUpdatedAt($value)
  * @method static \Illuminate\Database\Query\Builder|BookVendor withTrashed()
@@ -110,6 +112,8 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Item[] $items
+ * @property-read int|null $items_count
  * @property-read \App\Models\User|null $user
  * @method static \Illuminate\Database\Eloquent\Builder|Collection newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Collection newQuery()
