@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\BookVendorRequest;
+use App\Http\Resources\BookVendorResource;
 use App\Models\BookVendor;
 use App\Models\Report;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class BookVendorController extends Controller
@@ -24,6 +26,44 @@ class BookVendorController extends Controller
         $r->details = 'Submitted by '.auth()->user()->name;
         $bookvendor->reports()->save($r);
         return response()->json(['message' => 'Book Vendor Request successfull'], 201);
+    }
+
+    public function createPrivate(BookVendorRequest $request)
+    {
+        $bookvendor = BookVendor::create($request->all());
+        $bookvendor->user_id = auth()->user()->id;
+        $bookvendor->public = false;
+        $bookvendor->save();
+        $bookvendor->refresh();
+        return BookVendorResource::make($bookvendor);
+    }
+
+    public function updatePrivate(BookVendorRequest $request, BookVendor $vendor)
+    {
+        if($vendor->user_id == null || $vendor->user_id != auth()->user()->id) 
+            return response()->json("No Access", 403);
+
+        $vendor->update($request->all());
+        $vendor->user_id = auth()->user()->id;
+        $vendor->public = false;
+        $vendor->save();
+        $vendor->refresh();
+        return BookVendorResource::make($vendor);
+    }
+
+    public function deletePrivate(BookVendorRequest $request, BookVendor $vendor)
+    {
+        if ($vendor->user_id == null || $vendor->user_id != auth()->user()->id)
+            return response()->json("No Access", 403);
+        $vendor->delete();
+        $vendor->refresh();
+        return BookVendorResource::make($vendor);
+    }
+
+    public function getPrivate(){
+        $user = auth()->user();
+        $vendors = BookVendor::where('user_id', $user->id)->whereNotNull('deleted_at')->get();
+        return BookVendorResource::collection($vendors);
     }
 
     //**w/API FUNCTIONS */

@@ -46,7 +46,13 @@ Route::group(['prefix' => 'auth'], function (){
 Route::get('/isbn/{isbn}', [ISBNLookUpController::class, 'lookup']);
 
 Route::get('/vendors', [BookVendorController::class, 'getAll']);
-Route::middleware('auth:sanctum')->post('/vendors/suggest', [BookVendorController::class, 'suggest']);
+Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'vendors'], function() {
+    Route::get('/private', [BookVendorController::class, 'getPrivate']);
+    Route::post('/private', [BookVendorController::class, 'createPrivate']);
+    Route::put('/private/{vendor}', [BookVendorController::class, 'updatePrivate']);
+    Route::delete('/private/{vendor}', [BookVendorController::class, 'deletePrivate']);
+    Route::post('/suggest', [BookVendorController::class, 'suggest']);
+});
 
 Route::get('/book/{book}', [BookController::class, 'find']);
 
