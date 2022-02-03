@@ -81,6 +81,7 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property string $path_to_logo
+ * @property int|null $user_id
  * @property-read \App\Models\Report|null $reports
  * @method static \Illuminate\Database\Eloquent\Builder|BookVendor newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|BookVendor newQuery()
@@ -93,6 +94,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|BookVendor wherePathToLogo($value)
  * @method static \Illuminate\Database\Eloquent\Builder|BookVendor wherePublic($value)
  * @method static \Illuminate\Database\Eloquent\Builder|BookVendor whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|BookVendor whereUserId($value)
  * @method static \Illuminate\Database\Query\Builder|BookVendor withTrashed()
  * @method static \Illuminate\Database\Query\Builder|BookVendor withoutTrashed()
  */
@@ -301,6 +303,22 @@ namespace App\Models{
 
 namespace App\Models{
 /**
+ * App\Models\SocialBadges
+ *
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\User[] $users
+ * @property-read int|null $users_count
+ * @method static \Illuminate\Database\Eloquent\Builder|SocialBadges newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|SocialBadges newQuery()
+ * @method static \Illuminate\Database\Query\Builder|SocialBadges onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|SocialBadges query()
+ * @method static \Illuminate\Database\Query\Builder|SocialBadges withTrashed()
+ * @method static \Illuminate\Database\Query\Builder|SocialBadges withoutTrashed()
+ */
+	class SocialBadges extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
  * App\Models\User
  *
  * @property int $id
@@ -316,6 +334,8 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property int $role_id
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\SocialBadges[] $badges
+ * @property-read int|null $badges_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Collection[] $collections
  * @property-read int|null $collections_count
  * @property-read string $profile_photo_url

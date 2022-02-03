@@ -19,6 +19,7 @@ class UserResource extends JsonResource
             'name' => $this->name,
             'email' => $this->email,
             'role' => RoleResource::make($this->role),
+            'badges' => $this->badges
         ];
     }
 }

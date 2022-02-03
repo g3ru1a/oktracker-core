@@ -76,4 +76,9 @@ class User extends Authenticatable
     public function collections(){
         return $this->hasMany(Collection::class);
     }
+
+    public function badges()
+    {
+        return $this->belongsToMany(SocialBadges::class);
+    }
 }
