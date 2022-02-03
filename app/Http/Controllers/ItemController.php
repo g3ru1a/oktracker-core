@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ItemRequest;
 use App\Http\Resources\ItemResource;
+use App\Models\BookVendor;
+use App\Models\Collection;
 use App\Models\Item;
 use Illuminate\Http\Request;
 
@@ -29,8 +31,22 @@ class ItemController extends Controller
      */
     public function store(ItemRequest $request)
     {
+        $collection = Collection::findOrFail($request->collection_id);
+        if($collection->user_id != auth()->user()->id){
+            return response()->json(['message' => 'Bad Request.'], 422);
+        }
+        $vendor = BookVendor::findOrFail($request->vendor_id);
+        if($vendor->public == false && $vendor->user_id != auth()->user()->id){
+            return response()->json(['message' => 'Bad Request.'], 422);
+        }else if($vendor->public == false){
+            return response()->json(['message' => 'Bad Request.'], 422);
+        }
         try {
             $item = Item::create($request->all());
+            $collection = $item->collection;
+            $collection->total_books += 1;
+            $collection->total_cost += $item->price;
+            $collection->save();
             return ItemResource::make($item);
         } catch (\Throwable $th) {
             return response()->json(['message' => 'Something went wrong: ' . $th], 500);
@@ -47,8 +63,12 @@ class ItemController extends Controller
     public function update(ItemRequest $request, Item $item)
     {
         if ($item->collection->user->id == auth()->user()->id) {
+            $collection = $item->collection;
+            $collection->total_cost -= $item->price;
             $item->update($request->all());
             $item->refresh();
+            $collection->total_cost += $item->price;
+            $collection->save();
             return ItemResource::make($item);
         } else return response()->json(['message' => 'Cannot access this resource.'], 401);
     }
@@ -62,6 +82,10 @@ class ItemController extends Controller
     public function destroy(Item $item)
     {
         if ($item->collection->user->id == auth()->user()->id) {
+            $collection = $item->collection;
+            $collection->total_cost -= $item->price;
+            $collection->total_books -= 1;
+            $collection->save();
             $item->delete();
             return ItemResource::make($item);
         } else return response()->json(['message' => 'Cannot access this resource.'], 401);

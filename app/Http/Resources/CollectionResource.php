@@ -21,6 +21,7 @@ class CollectionResource extends JsonResource
             'total_cost' => $this->total_cost,
             'currency' => $this->currency,
             'user' => UserResource::make($this->user),
+            'user_id' => $this->user_id,
             'deleted_at' => $this->deleted_at,
         ];
     }
