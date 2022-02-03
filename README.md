@@ -17,7 +17,7 @@
 
 ## Code of Conduct
 
-In order to ensure that the OkTracker community is welcoming to all, please review and abide by the [Code of Conduct](https://github.com/g3ru1a/oktracker-core/blob/master/CODE_OF_CONDUCT.MD).
+In order to ensure that the OkTracker community is welcoming to all, please review and abide by the [Code of Conduct](CODE_OF_CONDUCT.md).
 
 ## Security Vulnerabilities
 
@@ -25,4 +25,4 @@ If you discover a security vulnerability within OkTracker Core, please DM Gerula
 
 ## License
 
-The OkTracker Core is open-sourced software licensed under the [GPL-3.0]().
+The OkTracker Core is open-sourced software licensed under the [GPL-3.0](LICENSE).
