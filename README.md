@@ -1,4 +1,4 @@
-<p align="center"><a href="https://beta.oktracker.com" target="_blank"><img src="https://beta.oktracker.com/logo.png" width="200" style="filter: brightness(0) invert(1);"></a></p>
+<p align="center" style="background:#393B51; padding: 10px"><a href="https://beta.oktracker.com" target="_blank"><img src="https://beta.oktracker.com/logo.png" width="200"></a></p>
 
 <p align="center">
 <!-- <a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
@@ -9,11 +9,21 @@
 
 ## About OkTracker Core
 
-//Todo
+OkTracke is a Book Collection Tracker. This repository holds the code for the API and the Admin Dashboard.
+
+**Current Features Include:**
+- Pulling Book data based on ISBN from [isbndb.com](https://isbndb.com) and organizing it in a [Series Structure](../../wiki)
+- User Accounts
+- Users can create [collections](../../wiki) and [items](../../wiki) within them.
+- Admin accounts can cleanup [book data](../../wiki), add/edit [Vendors](../../wiki) and manage [reports](../../wiki)
+- [Data Cleaner](../../wiki) accounts can work on [reports](../../wiki) in batches.
 
 ## Contributing
 
-//TODO
+When contributing to this repository, please first discuss the change you wish to make via [github discussions](https://github.com/g3ru1a/oktracker-core/discussions),
+before making a change.
+
+Please note we have a [code of conduct](/CODE_OF_CONDUCT.md), please follow it in all your interactions with the project.
 
 ## Code of Conduct
 
