@@ -1,4 +1,4 @@
-<p align="center" style="background:#393B51; padding: 10px"><a href="https://beta.oktracker.com" target="_blank"><img src="https://beta.oktracker.com/logo.png" width="200"></a></p>
+<p align="center"><a href="https://beta.oktracker.com" target="_blank"><img src="./readme_img.png" width=""></a></p>
 
 <p align="center">
 <!-- <a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
