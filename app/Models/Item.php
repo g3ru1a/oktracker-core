@@ -25,4 +25,9 @@ class Item extends Model
     {
         return $this->belongsTo(BookVendor::class, 'vendor_id', 'id');
     }
+
+    public function activity()
+    {
+        return $this->hasMany(SocialActivity::class);
+    }
 }

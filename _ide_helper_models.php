@@ -179,6 +179,8 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\SocialActivity[] $activity
+ * @property-read int|null $activity_count
  * @property-read \App\Models\Book|null $book
  * @property-read \App\Models\Collection|null $collection
  * @property-read \App\Models\BookVendor|null $vendor
@@ -303,14 +305,58 @@ namespace App\Models{
 
 namespace App\Models{
 /**
+ * App\Models\SocialActivity
+ *
+ * @property int $id
+ * @property int $user_id
+ * @property int $item_id
+ * @property string $action
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \App\Models\Item|null $item
+ * @property-read \App\Models\User|null $user
+ * @method static \Illuminate\Database\Eloquent\Builder|SocialActivity newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|SocialActivity newQuery()
+ * @method static \Illuminate\Database\Query\Builder|SocialActivity onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|SocialActivity query()
+ * @method static \Illuminate\Database\Eloquent\Builder|SocialActivity whereAction($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SocialActivity whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SocialActivity whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SocialActivity whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SocialActivity whereItemId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SocialActivity whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SocialActivity whereUserId($value)
+ * @method static \Illuminate\Database\Query\Builder|SocialActivity withTrashed()
+ * @method static \Illuminate\Database\Query\Builder|SocialActivity withoutTrashed()
+ */
+	class SocialActivity extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
  * App\Models\SocialBadges
  *
+ * @property int $id
+ * @property string $name
+ * @property string $color
+ * @property string $color_accent
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\User[] $users
  * @property-read int|null $users_count
  * @method static \Illuminate\Database\Eloquent\Builder|SocialBadges newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|SocialBadges newQuery()
  * @method static \Illuminate\Database\Query\Builder|SocialBadges onlyTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder|SocialBadges query()
+ * @method static \Illuminate\Database\Eloquent\Builder|SocialBadges whereColor($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SocialBadges whereColorAccent($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SocialBadges whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SocialBadges whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SocialBadges whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SocialBadges whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SocialBadges whereUpdatedAt($value)
  * @method static \Illuminate\Database\Query\Builder|SocialBadges withTrashed()
  * @method static \Illuminate\Database\Query\Builder|SocialBadges withoutTrashed()
  */
@@ -334,6 +380,8 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property int $role_id
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\SocialActivity[] $activity
+ * @property-read int|null $activity_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\SocialBadges[] $badges
  * @property-read int|null $badges_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Collection[] $collections

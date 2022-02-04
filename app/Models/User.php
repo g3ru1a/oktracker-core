@@ -81,4 +81,8 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(SocialBadges::class);
     }
+
+    public function activity(){
+        return $this->hasMany(SocialActivity::class);
+    }
 }

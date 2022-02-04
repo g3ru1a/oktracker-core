@@ -7,6 +7,8 @@ use App\Http\Resources\ItemResource;
 use App\Models\BookVendor;
 use App\Models\Collection;
 use App\Models\Item;
+use App\Models\SocialActivity;
+use Config;
 use Illuminate\Http\Request;
 
 class ItemController extends Controller
@@ -38,8 +40,6 @@ class ItemController extends Controller
         $vendor = BookVendor::findOrFail($request->vendor_id);
         if($vendor->public == false && $vendor->user_id != auth()->user()->id){
             return response()->json(['message' => 'Bad Request.'], 422);
-        }else if($vendor->public == false){
-            return response()->json(['message' => 'Bad Request.'], 422);
         }
         try {
             $item = Item::create($request->all());
@@ -47,6 +47,13 @@ class ItemController extends Controller
             $collection->total_books += 1;
             $collection->total_cost += $item->price;
             $collection->save();
+
+            $activity = new SocialActivity();
+            $activity->user_id = auth()->user()->id;
+            $activity->item_id = $item->id;
+            $activity->action = Config::get('messages.activity.actions.new_item');
+            $activity->save();
+
             return ItemResource::make($item);
         } catch (\Throwable $th) {
             return response()->json(['message' => 'Something went wrong: ' . $th], 500);

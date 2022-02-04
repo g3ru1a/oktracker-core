@@ -8,7 +8,9 @@ use App\Http\Controllers\ISBNLookUpController;
 use App\Http\Controllers\ItemController;
 use App\Http\Controllers\SeriesController;
 use App\Http\Controllers\UserController;
+use App\Http\Resources\SocialActivityResource;
 use App\Http\Resources\UserResource;
+use App\Models\SocialActivity;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -22,10 +24,6 @@ use Illuminate\Support\Facades\Route;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return UserResource::make(auth()->user());
-});
 
 Route::group(['prefix' => 'auth'], function (){
     Route::post('/register', [ApiAuthController::class, 'register']);
@@ -45,6 +43,19 @@ Route::group(['prefix' => 'auth'], function (){
 });
 
 Route::get('/isbn/{isbn}', [ISBNLookUpController::class, 'lookup']);
+Route::get('/book/{book}', [BookController::class, 'find']);
+
+
+Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'user'], function () {
+    Route::get('/', function (Request $request) {
+        return UserResource::make(auth()->user());
+    });
+
+    Route::get('/activity/{limit?}', function (Request $request, $limit = 10) {
+        $activity = SocialActivity::where('user_id', auth()->user()->id)->take($limit)->get();
+        return SocialActivityResource::collection($activity);
+    });
+});
 
 Route::get('/vendors', [BookVendorController::class, 'getAll']);
 Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'vendors'], function() {
@@ -54,8 +65,6 @@ Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'vendors'], function()
     Route::delete('/private/{vendor}', [BookVendorController::class, 'deletePrivate']);
     Route::post('/suggest', [BookVendorController::class, 'suggest']);
 });
-
-Route::get('/book/{book}', [BookController::class, 'find']);
 
 Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'collection'], function() {
     Route::get('/list', [CollectionController::class, 'list']);
