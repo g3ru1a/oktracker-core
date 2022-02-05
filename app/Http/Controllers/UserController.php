@@ -2,7 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\SocialActivityResource;
+use App\Http\Resources\UserResource;
+use App\Http\Resources\UserResultResource;
 use App\Mail\EmailChangeVerify;
+use App\Models\Collection;
+use App\Models\Item;
+use App\Models\SocialActivity;
 use App\Models\User;
 use Auth;
 use Carbon\Carbon;
@@ -10,9 +16,80 @@ use Crypt;
 use Hash;
 use Illuminate\Http\Request;
 use Mail;
+use Ramsey\Uuid\Type\Integer;
 
 class UserController extends Controller
 {
+    public function getUserInfo()
+    {
+        return UserResource::make(auth()->user());
+    }
+
+    public function searchUsers($query, $page = 1, $count = 30){
+        $users = User::where("name", "LIKE", "%".$query."%")
+            ->skip($count * ($page-1))->take($count)->get();
+
+        $max_pages = User::where("name", "LIKE", "%" . $query . "%")->count() / $count;
+        $max_pages = ceil($max_pages);
+
+        $pagination_result = [
+            "max_pages" => $max_pages,
+            "prev_page" => ($page > 1) ? $page - 1 : null,
+            "next_page" => ($page + 1 <= $max_pages) ? $page + 1 : null,
+        ];
+        return response()->json([
+            "data" => [
+                "users" => UserResultResource::collection($users),
+                "pagination" => $pagination_result
+            ]
+        ]);
+    }
+
+    public function getUserActivity($page = 1, User $user = null, $count = 20){
+        if($user == null) $user = auth()->user();
+
+        $activity = SocialActivity::where('user_id', $user->id)->orderBy("created_at", "desc")->has("item")->skip($count*($page-1))->take($count)->get();
+        $max_pages = SocialActivity::where('user_id', $user->id)->has("item")->count() / $count;
+        $max_pages = ceil($max_pages);
+        
+        $pagination_result = [
+            "max_pages" => $max_pages,
+            "prev_page" => ($page > 1) ? $page - 1 : null,
+            "next_page" => ($page + 1 <= $max_pages) ? $page + 1 : null,
+        ];
+
+        if($page == 1){
+            $collections = Collection::where('user_id', $user->id)->get();
+            $total_books = 0;
+            foreach ($collections as $c) {
+                $total_books += $c->total_books;
+            }
+            $collection_ids = $collections->pluck("id");
+            $oldest_item = Item::whereIn("collection_id", $collection_ids)
+            ->orderBy("bought_on")->first();
+
+            $now = Carbon::now("UTC");
+            $old_item_date = Carbon::createFromFormat("Y-m-d", $oldest_item->bought_on, "UTC");
+            $days_diff = $old_item_date->diffInDays($now) + 1;
+
+            return response()->json([
+                "data" => [
+                    "total_books" => $total_books,
+                    "days_collecting" => $days_diff,
+                    "activities" => SocialActivityResource::collection($activity),
+                    "pagination" => $pagination_result
+                ]
+            ]);
+        }else{
+            return response()->json([
+                "data" => [
+                    "activities" => SocialActivityResource::collection($activity),
+                    "pagination" => $pagination_result
+                ]
+            ]);
+        }
+    }
+
     public function changePassword(Request $request){
         $fields = $request->validate([
             'old_password' => 'required|string',

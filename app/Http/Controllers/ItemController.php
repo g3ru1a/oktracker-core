@@ -89,6 +89,9 @@ class ItemController extends Controller
     public function destroy(Item $item)
     {
         if ($item->collection->user->id == auth()->user()->id) {
+            $activity = SocialActivity::where('user_id', auth()->user()->id)
+                ->where('item_id', $item->id)->first();
+            $activity->delete();
             $collection = $item->collection;
             $collection->total_cost -= $item->price;
             $collection->total_books -= 1;

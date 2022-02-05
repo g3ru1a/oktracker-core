@@ -47,14 +47,9 @@ Route::get('/book/{book}', [BookController::class, 'find']);
 
 
 Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'user'], function () {
-    Route::get('/', function (Request $request) {
-        return UserResource::make(auth()->user());
-    });
-
-    Route::get('/activity/{limit?}', function (Request $request, $limit = 10) {
-        $activity = SocialActivity::where('user_id', auth()->user()->id)->take($limit)->get();
-        return SocialActivityResource::collection($activity);
-    });
+    Route::get('/', [UserController::class, 'getUserInfo']);
+    Route::get('/search/{query}/{page?}/{count?}', [UserController::class, 'searchUsers']);
+    Route::get('/activity/{page?}/{user?}/{count?}', [UserController::class, 'getUserActivity']);
 });
 
 Route::get('/vendors', [BookVendorController::class, 'getAll']);

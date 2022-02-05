@@ -19,7 +19,7 @@ class CreateItemsTable extends Migration
             $table->foreignId('collection_id');
             $table->foreignId('vendor_id');
             $table->unsignedFloat('price');
-            $table->string('bought_on');
+            $table->date('bought_on');
             $table->boolean('arrived')->default(true);
             $table->timestamps();
             $table->softDeletes();
