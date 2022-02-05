@@ -69,11 +69,16 @@ class UserController extends Controller
             ->orderBy("bought_on")->first();
 
             $now = Carbon::now("UTC");
-            $old_item_date = Carbon::createFromFormat("Y-m-d", $oldest_item->bought_on, "UTC");
+            if($oldest_item != null){
+                $old_item_date = Carbon::createFromFormat("Y-m-d", $oldest_item->bought_on, "UTC");
+            }else{
+                $old_item_date = Carbon::createFromFormat("Y-m-d H:i:s", $user->created_at, "UTC");
+            }
             $days_diff = $old_item_date->diffInDays($now) + 1;
 
             return response()->json([
                 "data" => [
+                    "user" => UserResultResource::make($user),
                     "total_books" => $total_books,
                     "days_collecting" => $days_diff,
                     "activities" => SocialActivityResource::collection($activity),
