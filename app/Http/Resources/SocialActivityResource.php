@@ -26,7 +26,8 @@ class SocialActivityResource extends JsonResource
             'book_title' => $this->item->book->title,
             'book_cover_url' => $cover_url,
             'vendor_name' => $this->item->vendor->name,
-            'price' => $this->item->price
+            'price' => $this->item->price,
+            'currency' => $this->item->collection->currency,
         ];
     }
 }
