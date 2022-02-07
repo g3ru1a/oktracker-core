@@ -62,7 +62,7 @@ class BookVendorController extends Controller
 
     public function getPrivate(){
         $user = auth()->user();
-        $vendors = BookVendor::where('user_id', $user->id)->whereNotNull('deleted_at')->get();
+        $vendors = BookVendor::where('user_id', $user->id)->whereNull('deleted_at')->get();
         return BookVendorResource::collection($vendors);
     }
 
