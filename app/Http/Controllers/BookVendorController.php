@@ -7,6 +7,7 @@ use App\Http\Resources\BookVendorResource;
 use App\Models\BookVendor;
 use App\Models\Report;
 use App\Models\User;
+use App\Models\Item;
 use Illuminate\Http\Request;
 
 class BookVendorController extends Controller
@@ -55,6 +56,7 @@ class BookVendorController extends Controller
     {
         if ($vendor->user_id == null || $vendor->user_id != auth()->user()->id)
             return response()->json("No Access", 403);
+        Item::where('vendor_id', $vendor->id)->update(['vendor_id' => 1]);
         $vendor->delete();
         $vendor->refresh();
         return BookVendorResource::make($vendor);
