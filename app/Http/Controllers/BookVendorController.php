@@ -51,7 +51,7 @@ class BookVendorController extends Controller
         return BookVendorResource::make($vendor);
     }
 
-    public function deletePrivate(BookVendorRequest $request, BookVendor $vendor)
+    public function deletePrivate(Request $request, BookVendor $vendor)
     {
         if ($vendor->user_id == null || $vendor->user_id != auth()->user()->id)
             return response()->json("No Access", 403);
