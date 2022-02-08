@@ -8,6 +8,7 @@ use App\Models\Collection;
 use App\Models\Item;
 use App\Models\SocialActivity;
 use App\Models\User;
+use App\Models\Follower;
 use Auth;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -30,6 +31,7 @@ class SocialActivityController extends Controller
         ];
 
         if ($page == 1) {
+            $followed = Follower::where("user_id", auth()->user()->id)->where("follow_id", $user->id)->count() > 0;
             $collections = Collection::where('user_id', $user->id)->get();
             $total_books = 0;
             foreach ($collections as $c) {
@@ -50,6 +52,7 @@ class SocialActivityController extends Controller
             return response()->json([
                 "data" => [
                     "user" => UserResultResource::make($user),
+                    "followed" => $followed,
                     "total_books" => $total_books,
                     "days_collecting" => $days_diff,
                     "activities" => SocialActivityResource::collection($activity),
