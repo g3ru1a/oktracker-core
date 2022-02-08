@@ -85,4 +85,15 @@ class User extends Authenticatable
     public function activity(){
         return $this->hasMany(SocialActivity::class);
     }
+
+    public function followers()
+    {
+        return $this->belongsToMany(User::class, 'followers', 'follow_id', 'user_id');
+    }
+
+    // Get all users we are following
+    public function following()
+    {
+        return $this->belongsToMany(User::class, 'followers', 'user_id', 'follow_id');
+    }
 }

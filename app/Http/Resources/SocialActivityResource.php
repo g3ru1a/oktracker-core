@@ -18,9 +18,18 @@ class SocialActivityResource extends JsonResource
         if(!str_contains($cover_url, "http")){
             $cover_url = env("APP_URL").$cover_url;
         }
+
+        if ($this->user->profile_photo_path != null) {
+            $pfp_path = env("APP_URL") . $this->user->profile_photo_path;
+        } else {
+            $pfp_path = env("APP_URL") . "/missing_cover.png";
+        }
+
         return [
             'id' => $this->id,
             'user_id' => $this->user_id,
+            'username' => $this->user->name,
+            'pfp_url' => $pfp_path,
             'created_at' => $this->created_at,
             // 'item' => ItemResource::make($this->item),
             'book_title' => $this->item->book->title,

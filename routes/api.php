@@ -4,9 +4,11 @@ use App\Http\Controllers\ApiAuthController;
 use App\Http\Controllers\BookController;
 use App\Http\Controllers\BookVendorController;
 use App\Http\Controllers\CollectionController;
+use App\Http\Controllers\FollowController;
 use App\Http\Controllers\ISBNLookUpController;
 use App\Http\Controllers\ItemController;
 use App\Http\Controllers\SeriesController;
+use App\Http\Controllers\SocialActivityController;
 use App\Http\Controllers\UserController;
 use App\Http\Resources\SocialActivityResource;
 use App\Http\Resources\UserResource;
@@ -34,7 +36,6 @@ Route::group(['prefix' => 'auth'], function (){
 
     Route::get('/email-change/{user}/{email_crypted}/{token}', [UserController::class, 'changeEmailConfirm']);
     Route::group(['middleware' => 'auth:sanctum'], function(){
-
         Route::post('/email-change', [UserController::class, 'changeEmail']);
         Route::post('/change-password', [UserController::class, 'changePassword']);
         Route::post('/change-info', [UserController::class, 'update']); 
@@ -45,11 +46,19 @@ Route::group(['prefix' => 'auth'], function (){
 Route::get('/isbn/{isbn}', [ISBNLookUpController::class, 'lookup']);
 Route::get('/book/{book}', [BookController::class, 'find']);
 
-
 Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'user'], function () {
     Route::get('/', [UserController::class, 'getUserInfo']);
     Route::get('/search/{query}/{page?}/{count?}', [UserController::class, 'searchUsers']);
-    Route::get('/activity/{page?}/{user?}/{count?}', [UserController::class, 'getUserActivity']);
+});
+
+Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'social'], function () {
+    Route::get('/activity/{page?}/{user?}/{count?}', [SocialActivityController::class, 'getUserActivity']);
+    Route::get('/feed/{page?}/{count?}', [SocialActivityController::class, 'getActivityFeed']);
+
+    Route::get('/followers/{user?}', [FollowController::class, 'getFollowers']);
+    Route::get('/following/{user?}', [FollowController::class, 'getFollowing']);
+    Route::post('/follow/{user}', [FollowController::class, 'follow']);
+    Route::post('/unfollow/{user}', [FollowController::class, 'unfollow']);
 });
 
 Route::get('/vendors', [BookVendorController::class, 'getAll']);

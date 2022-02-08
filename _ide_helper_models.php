@@ -167,6 +167,32 @@ namespace App\Models{
 
 namespace App\Models{
 /**
+ * App\Models\Follower
+ *
+ * @property int $id
+ * @property int $user_id
+ * @property int $follow_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @method static \Illuminate\Database\Eloquent\Builder|Follower newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Follower newQuery()
+ * @method static \Illuminate\Database\Query\Builder|Follower onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|Follower query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Follower whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Follower whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Follower whereFollowId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Follower whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Follower whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Follower whereUserId($value)
+ * @method static \Illuminate\Database\Query\Builder|Follower withTrashed()
+ * @method static \Illuminate\Database\Query\Builder|Follower withoutTrashed()
+ */
+	class Follower extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
  * App\Models\Item
  *
  * @property int $id
@@ -386,6 +412,10 @@ namespace App\Models{
  * @property-read int|null $badges_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Collection[] $collections
  * @property-read int|null $collections_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|User[] $followers
+ * @property-read int|null $followers_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|User[] $following
+ * @property-read int|null $following_count
  * @property-read string $profile_photo_url
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection|\Illuminate\Notifications\DatabaseNotification[] $notifications
  * @property-read int|null $notifications_count
