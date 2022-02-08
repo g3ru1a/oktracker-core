@@ -86,7 +86,7 @@ class SocialActivityController extends Controller
         ];
 
         return response()->json([
-            "date" => [
+            "data" => [
                 "activity" => SocialActivityResource::collection($activity),
                 "pagination" => $pagination_result
             ]
