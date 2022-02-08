@@ -17,7 +17,7 @@ class UserResultResource extends JsonResource
         if ($this->profile_photo_path != null) {
             $pfp_path = env("APP_URL") . $this->profile_photo_path;
         }else {
-            $pfp_path = env("APP_URL") . "/missing_cover.png";
+            $pfp_path = "https://media.discordapp.net/attachments/825042681779716136/940697795692732437/logo_play_store.png";
         }
         return [
             "id" => $this->id,
