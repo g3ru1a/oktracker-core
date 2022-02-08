@@ -34,7 +34,7 @@ class SocialActivityResource extends JsonResource
             // 'item' => ItemResource::make($this->item),
             'book_title' => $this->item->book->title,
             'book_cover_url' => $cover_url,
-            'vendor_name' => $this->item->vendor->name,
+            'vendor_name' => ($this->item->vendor->id == 1) ? null : $this->item->vendor->name,
             'price' => $this->item->price,
             'currency' => $this->item->collection->currency,
         ];
