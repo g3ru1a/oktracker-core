@@ -22,7 +22,22 @@ class ISBNLookUpController extends Controller
         if($book == false){
             $book = self::lookupISBNAPI($isbn);
         }
-        return $book == false ? response()->json('No book found.', 404) : BookResource::make($book);
+        if($book == false){
+            self::makeMissingBookReport($isbn);
+            return response()->json('No book found.', 404);
+        }else return BookResource::make($book);
+    }
+
+    private static function makeMissingBookReport($isbn){
+        $book = new Book();
+        $book->title = "Unknown";
+        if(strlen($isbn) == 13) $book->isbn_13 = $isbn;
+        else $book->isbn_10 = $isbn;
+        $book->save();
+
+        $r = new Report();
+        $r->title = "Collect book info for isbn: " . $isbn;
+        $book->reports()->save($r);
     }
 
     /**

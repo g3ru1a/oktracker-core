@@ -20,6 +20,7 @@ class BookVendorTableList extends Component
     public function render()
     {
         $vendors = BookVendor::where('name', 'like', '%' . $this->lookup . '%')
+            ->whereNull("user_id")
             ->orderBy('updated_at', 'desc')->paginate($this->count);
 
         return view('livewire.book-vendor-table-list', [
