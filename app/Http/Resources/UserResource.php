@@ -3,6 +3,8 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use App\Models\Follower;
+use Auth;
 
 class UserResource extends JsonResource
 {
@@ -19,13 +21,15 @@ class UserResource extends JsonResource
         }else {
             $pfp_path = "https://media.discordapp.net/attachments/825042681779716136/940698494094692362/default_pfp.png";
         }
+        $followed = Follower::where("user_id", auth()->user()->id)->where("follow_id", $this->id)->count() > 0;
         return [
             'id' => $this->id,
             'name' => $this->name,
             'email' => $this->email,
             "pfp" => $pfp_path,
             'role' => RoleResource::make($this->role),
-            'badges' => $this->badges
+            'badges' => $this->badges,
+            "following" => $followed,
         ];
     }
 }
