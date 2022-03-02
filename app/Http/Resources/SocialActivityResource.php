@@ -25,6 +25,7 @@ class SocialActivityResource extends JsonResource
             $pfp_path = env("APP_URL") . "/missing_cover.png";
         }
         $likes = $this->likes()->count();
+        $liked = $this->likes()->where("user_id", Auth::user()->id)->exists();
         return [
             'id' => $this->id,
             'user_id' => $this->user_id,
@@ -38,6 +39,7 @@ class SocialActivityResource extends JsonResource
             'price' => $this->item->price,
             'currency' => $this->item->collection->currency,
             'likes' => $likes,
+            'liked' => $liked,
         ];
     }
 }
