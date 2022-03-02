@@ -36,7 +36,7 @@ class SocialActivityResource extends JsonResource
             'book_cover_url' => $cover_url,
             'vendor_name' => ($this->item->vendor->id == 1) ? null : $this->item->vendor->name,
             'price' => $this->item->price,
-            'currency' => $this->item->collection->currency,
+            'currency' => $this->item->collection->currency
         ];
     }
 }

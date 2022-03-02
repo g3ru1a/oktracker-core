@@ -232,6 +232,18 @@ namespace App\Models{
 
 namespace App\Models{
 /**
+ * App\Models\Like
+ *
+ * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $likeable
+ * @method static \Illuminate\Database\Eloquent\Builder|Like newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Like newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Like query()
+ */
+	class Like extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
  * App\Models\Report
  *
  * @property int $id
@@ -341,6 +353,8 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \App\Models\Item|null $item
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Like[] $likes
+ * @property-read int|null $likes_count
  * @property-read \App\Models\User|null $user
  * @method static \Illuminate\Database\Eloquent\Builder|SocialActivity newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|SocialActivity newQuery()
@@ -417,6 +431,8 @@ namespace App\Models{
  * @property-read \Illuminate\Database\Eloquent\Collection|User[] $following
  * @property-read int|null $following_count
  * @property-read string $profile_photo_url
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Like[] $liked
+ * @property-read int|null $liked_count
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection|\Illuminate\Notifications\DatabaseNotification[] $notifications
  * @property-read int|null $notifications_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Report[] $reports

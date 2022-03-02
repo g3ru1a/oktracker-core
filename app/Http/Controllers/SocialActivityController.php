@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\LikeResource;
 use App\Http\Resources\SocialActivityResource;
 use App\Http\Resources\UserResultResource;
 use App\Models\Collection;
@@ -9,6 +10,7 @@ use App\Models\Item;
 use App\Models\SocialActivity;
 use App\Models\User;
 use App\Models\Follower;
+use App\Models\Like;
 use Auth;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -91,5 +93,42 @@ class SocialActivityController extends Controller
                 "pagination" => $pagination_result
             ]
         ]);
+    }
+
+    public function getGlobalFeed($page = 1, $count = 20){
+        $activity = SocialActivity::orderBy("created_at", "desc")->has("item")
+            ->skip($count * ($page - 1))->take($count)->get();
+        $max_pages = ceil(SocialActivity::orderBy("created_at", "desc")->has("item")->count() / $count);
+
+        $pagination_result = [
+            "max_pages" => $max_pages,
+            "prev_page" => ($page > 1) ? $page - 1 : null,
+            "next_page" => ($page + 1 <= $max_pages) ? $page + 1 : null,
+        ];
+
+        return response()->json([
+            "data" => [
+                "activity" => SocialActivityResource::collection($activity),
+                "pagination" => $pagination_result
+            ]
+        ]);
+    }
+
+    public function likeActivity(SocialActivity $activity){
+        $like = new Like([
+            "user_id" => Auth::user()->id,
+        ]);
+        $activity->likes()->save($like);
+        return SocialActivityResource::make($activity);
+    }
+
+    public function unlikeActivity(SocialActivity $activity){
+        $like = $activity->likes()->where("user_id", Auth::user()->id);
+        $like->delete();
+        return response()->json();
+    }
+
+    public function likes(SocialActivity $activity){
+        return LikeResource::collection($activity->likes);
     }
 }

@@ -7,13 +7,8 @@ use App\Http\Controllers\CollectionController;
 use App\Http\Controllers\FollowController;
 use App\Http\Controllers\ISBNLookUpController;
 use App\Http\Controllers\ItemController;
-use App\Http\Controllers\SeriesController;
 use App\Http\Controllers\SocialActivityController;
 use App\Http\Controllers\UserController;
-use App\Http\Resources\SocialActivityResource;
-use App\Http\Resources\UserResource;
-use App\Models\SocialActivity;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -52,7 +47,12 @@ Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'user'], function () {
 });
 
 Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'social'], function () {
+    Route::get('/activity/likes/{activity}', [SocialActivityController::class, 'likes']);
+    Route::post('/activity/like/{activity}', [SocialActivityController::class, 'likeActivity']);
+    Route::post('/activity/unlike/{activity}', [SocialActivityController::class, 'unlikeActivity']);
+
     Route::get('/activity/{page?}/{user?}/{count?}', [SocialActivityController::class, 'getUserActivity']);
+    Route::get('/global/feed/{page?}/{count?}', [SocialActivityController::class, 'getGlobalFeed']);
     Route::get('/feed/{page?}/{count?}', [SocialActivityController::class, 'getActivityFeed']);
 
     Route::get('/followers/{user?}', [FollowController::class, 'getFollowers']);

@@ -18,4 +18,8 @@ class SocialActivity extends Model
     {
         return $this->belongsTo(Item::class);
     }
+
+    public function likes() {
+        return $this->morphMany(Like::class, "likeable");
+    }
 }

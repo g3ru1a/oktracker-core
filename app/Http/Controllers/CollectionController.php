@@ -6,6 +6,7 @@ use App\Http\Requests\CollectionRequest;
 use App\Http\Resources\CollectionResource;
 use App\Http\Resources\ItemResourceShort;
 use App\Models\Collection;
+use App\Models\Role;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -44,9 +45,13 @@ class CollectionController extends Controller
      */
     public function store(CollectionRequest $request)
     {
+        $user = Auth::user();
+        if ($user->role_id === Role::USER && count($user->collections) >= 3) {
+            return response()->json(["message" => "Collection Limit Reached"]);
+        }
         try {
             $collection = Collection::create($request->all());
-            Auth::user()->collections()->save($collection);
+            $user->collections()->save($collection);
             $collection->refresh();
             return CollectionResource::make($collection);
         } catch (\Throwable $th) {

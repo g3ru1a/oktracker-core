@@ -74,7 +74,7 @@ class User extends Authenticatable
     }
 
     public function collections(){
-        return $this->hasMany(Collection::class);
+        return $this->hasMany(Collection::class)->whereNull("deleted_at");
     }
 
     public function badges()
@@ -95,5 +95,9 @@ class User extends Authenticatable
     public function following()
     {
         return $this->belongsToMany(User::class, 'followers', 'user_id', 'follow_id')->whereNull("deleted_at");
+    }
+
+    public function liked(){
+        return $this->hasMany(Like::class);
     }
 }
