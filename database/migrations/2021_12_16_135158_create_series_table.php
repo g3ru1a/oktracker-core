@@ -21,7 +21,6 @@ class CreateSeriesTable extends Migration
             $table->string('publisher')->nullable();
             $table->longText('summary')->nullable();
             $table->json('authors')->nullable();
-            $table->json('contributions')->nullable();
             $table->boolean('new')->default(true);
             $table->timestamps();
         });

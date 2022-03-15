@@ -93,11 +93,11 @@
                             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                 <a href="{{ route('series.edit', ['series' => $s->id]) }}"
                                     class="text-indigo-600 hover:text-indigo-900">Edit</a>
-                                <form action="{{ route('series.destroy', ['series' => $s->id]) }}" method="POST">
+                                <!-- <form action="{{ route('series.destroy', ['series' => $s->id]) }}" method="POST">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="text-red-600 hover:text-red-900">Delete</button>
-                                </form>
+                                </form> -->
                             </td>
                         </tr>
                     @endforeach

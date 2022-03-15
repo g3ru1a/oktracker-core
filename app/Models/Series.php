@@ -10,7 +10,7 @@ class Series extends Model
     use HasFactory;
 
     protected $fillable = 
-        ['title', 'language', 'summary', 'publisher', 'authors', 'contributions', 'new', 'kind'];
+        ['title', 'language', 'summary', 'cover_url', 'publisher', 'authors', 'new'];
 
     public function books()
     {

@@ -9,7 +9,11 @@
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
 
-            <x-jet-action-section title="Pointers" description="This should be a list of pointers but I dont know what to write rn">
+            <x-jet-action-section title="Pointers" description="Follow the indications below with care. <br><br>
+            <b>Title</b> - Only change it if theres something severly wrong. Make sure there are no volume numbers and no () or other info such as '(light novel) (paperback)' etc. <br><br>
+            <b>Summary</b> - It supports HTML markup for bolding, italics and underlines.<br><br>
+            <b>Authors</b> - Includes authors and artists or other contributors that worked on the original book (Does not include translators, editors etc.). Separate names with a ','. When working with a foreign book, write the name in the english alphabet if possible (i.e. 暁なつめ will be written as Natsume Akatsuki)<br><br>
+            <b>Cover</b> - If the series has more than one volumes, use the Vol.1 cover. Get the highest quality possible thats under 2mb in filesize.">
                 <x-slot  name="content">
                     
                     <form action="{{route('series.store')}}" method="POST" enctype="multipart/form-data">
@@ -26,34 +30,22 @@
                         </div>
 
                         <div class="mt-2 flex">
-                            <div class="w-1/4 mr-1">
+                            <!-- <div class="w-1/4 mr-1">
                                 <x-jet-label for="publisher" value="{{ __('Publisher') }} ({{ __('Optional') }})" />
                                 <x-jet-input name="publisher" placeholder="E.g. Kodansha" type="text" class="mt-1 block w-full" autocomplete="publisher" />
                                 <x-jet-input-error for="publisher" class="mt-2" />
                             </div>
-                            <div class="w-1/4 ml-1">
+                            <div class="w-1/4 mx-1">
                                 <x-jet-label for="language" value="{{ __('Language') }}" />
-                                <x-jet-input required name="language" placeholder="E.g. en_US" type="text" class="mt-1 block w-full" autocomplete="language" />
+                                <x-jet-input required name="language" placeholder="E.g. en" type="text" class="mt-1 block w-full" autocomplete="language" />
                                 <x-jet-input-error for="language" class="mt-2" />
-                            </div>
-                            <div class="w-2/4 ml-1">
-                                <livewire:book-kind-selector/>
-                            </div>
-                        </div>
-
-                        <div class="mt-2 flex">
-                            <div class="w-1/2 mr-1">
+                            </div> -->
+                            <div class="w-full ml-1">
                                 <x-jet-label for="authors" value="{{ __('Authors') }} ({{ __('Optional') }})" />
                                 <x-jet-input name="authors" placeholder="E.g. Seiso, Mark" type="text" class="mt-1 block w-full" autocomplete="authors" />
                                 <x-jet-input-error for="authors" class="mt-2" />
                             </div>
-                            <div class="w-1/2 ml-1">
-                                <x-jet-label for="contributions" value="{{ __('Contributions') }} ({{ __('Optional') }})" />
-                                <x-jet-input name="contributions" placeholder="E.g. Natsume Akatsuki" type="text" class="mt-1 block w-full" autocomplete="contributions" />
-                                <x-jet-input-error for="contributions" class="mt-2" />
-                            </div>
                         </div>
-
 
                         <div class="mt-2">
                             <x-jet-label for="contributions" value="{{ __('Cover Photo') }} ({{ __('Optional') }})" />

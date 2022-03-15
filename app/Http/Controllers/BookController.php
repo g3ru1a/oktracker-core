@@ -58,9 +58,13 @@ class BookController extends Controller
     {
         $this->authorize('create', Book::class);
 
-        $book = Book::create($request->all());
-        $book->oneshot = $request->is_oneshot == 'on';
+        $authors = preg_replace('/, +/', ",", $request->authors);
+        $authors = explode(",", $authors);
+        $book = Book::create($request->except(["authors"]));
+        $book->synopsis = htmlspecialchars($book->synopsis);
+        $book->authors = json_encode($authors);
         $book->save();
+
         if ($request->hasFile('cover')) {
             $originalExtension = $request->file('cover')->getClientOriginalExtension();
             $filename = 'cover'. $originalExtension;
@@ -110,8 +114,11 @@ class BookController extends Controller
     {
         $this->authorize('update', Book::class);
 
-        $book->update($request->all());
-        $book->oneshot = $request->is_oneshot == 'on';
+        $authors = preg_replace('/, +/', ",", $request->authors);
+        $authors = explode(",", $authors);
+        $book->update($request->except(["authors"]));
+        $book->synopsis = htmlspecialchars($book->synopsis);
+        $book->authors = json_encode($authors);
         $book->save();
 
         if ($request->hasFile('cover')) {

@@ -41,8 +41,14 @@ class SeriesController extends Controller
     public function store(SeriesStoreRequest $request)
     {
         $this->authorize('create', Series::class);
-        
-        $series = Series::create($request->all());
+        $authors = preg_replace('/, +/', ",", $request->authors);
+        $authors = explode(",", $authors);
+        $request->authors = $authors;
+        $request->summary = htmlspecialchars($request->summary);
+        // dd($authors, $request->authors);
+        $series = Series::create($request->except(["authors"]));
+        $series->authors = json_encode($authors);
+        $series->save();
         if($request->hasFile('cover')){
             $originalExtension = $request->file('cover')->getClientOriginalExtension();
             $filename = 'cover'.$originalExtension;
@@ -89,8 +95,13 @@ class SeriesController extends Controller
     public function update(SeriesStoreRequest $request, Series $series)
     {
         $this->authorize('update', Series::class);
-        
-        $series->update($request->all());
+        $authors = preg_replace('/, +/', ",", $request->authors);
+        $authors = explode(",", $authors);
+        $request->authors = $authors;
+        $request->summary = htmlspecialchars($request->summary);
+        $series->update($request->except(["authors"]));
+        $series->authors = json_encode($authors);
+        $series->save();
         if ($request->hasFile('cover')) {
             $originalExtension = $request->file('cover')->getClientOriginalExtension();
 

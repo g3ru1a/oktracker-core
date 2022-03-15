@@ -74,24 +74,54 @@ class ISBNLookUpController extends Controller
             return false;
         }
         $data = json_decode($response->getBody());
-        $title = explode(',', $data->book->title_long);
-        $series = Series::where('title', 'like', '%'.$title[0].'%')->first();
+        $clean_title = self::RemoveExtrasFromTitle($data->book->title_long);
+        $volume_number = self::GetVolumeNumber($data->book->title_long);
+        // dd([$data->book->title_long,$volume_number, $clean_title]);
+        $series = Series::where('title', 'like', '%'.$clean_title.'%')->first();
+
+        if(isset($data->book->overview)){
+            $synopsis = htmlspecialchars($data->book->overview);
+        }else if(isset($data->book->synopsys)){
+            $synopsis = htmlspecialchars($data->book->synopsys);
+        }else $synopsis = null;
+
+        if(isset($data->book->language)){
+            $language = self::ParseLanguage($data->book->language);
+        }else $language = null;
+
         if($series == null){
             $series = Series::create([
-                'title' => $data->book->title_long,
-                'language' => $data->book->language,
+                'title' => $clean_title,
+                'language' => json_encode([$language ?? ""]),
+                'publisher' => json_encode([$data->book->publisher ?? ""]),
+                'summary' => $synopsis,
+                'cover_url' => $data->book->image ?? '/missing_cover.png',
                 'authors' => isset($data->book->authors) ? json_encode($data->book->authors) : null,
             ]);
             $r = new Report();
             $r->title = 'Validate new series: '.$series->title;
             $series->reports()->save($r);
         }
+
+        if(isset($data->book->date_published)){
+            $date_pub = new \DateTime($data->book->date_published);
+            $date_pub = $date_pub->format("Y-m-d");
+        }else $date_pub = null;
+
         $book = Book::create([
             'isbn_10' => $data->book->isbn,
             'isbn_13' => $data->book->isbn13,
             'title' => $data->book->title_long,
+            'clean_title' => $clean_title,
             'pages' => $data->book->pages ?? null,
-            'publish_date' => $data->book->date_published ?? null,
+            'synopsis' => $synopsis,
+            'volume_number' => $volume_number,
+            'publish_date' => $date_pub,
+            'pages' => $data->book->pages ?? null,
+            'binding' => $data->book->binding ?? "paperback",
+            'authors' => json_encode($data->book->authors) ?? null,
+            'publisher' => $data->book->publisher ?? null,
+            'language' => $language,
             'cover_url' => $data->book->image ?? '/missing_cover.png',
         ]);
         $series->books()->save($book);
@@ -100,7 +130,27 @@ class ISBNLookUpController extends Controller
         $book->reports()->save($r);
         return Book::with('series')->find($book->id);
     }
+
+    private static function RemoveExtrasFromTitle($title){
+        $ct = preg_replace('/(\s?\(.[^()]+\))+|(\s?\([0-9]+\))+/', "", $title);
+        $ct = preg_replace('/(-?,?\s?[Tt]ome\s?\d+)|(,?\s?[Vv]ol\.\s?\d+)|(,?\s?[Vv]olume\s?\d+)|([\s,:-]\d{1,3}($|[^0-9\(\),]))/',
+            "", $ct);
+        $ct = preg_replace('/(\s(\d+)\s?:)|(,?\s?[Tt]ome\s?\d+\s?:)/',
+            ":", $ct);
+        return $ct;
+    }
+
+    private static function GetVolumeNumber($title){
+        preg_match('/(\d{1,3})(?!.*\d)/', $title, $matches);
+        return count($matches) > 0 ? $matches[0] : null;
+    }
+
+    private static function ParseLanguage($lang){
+        $lang_code = explode("_", $lang)[0];
+        return $lang_code;
+    }
 }
 //9784040646176
 
 //9781421526690
+

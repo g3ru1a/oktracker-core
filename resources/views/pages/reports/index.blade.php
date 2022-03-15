@@ -94,7 +94,24 @@
                                     </td>
                                     <td class="px-6 py-4 whitespace-wrap w-1/5">
                                         <div class="text-sm font-medium text-gray-900">
-                                            {{ $r->details }}
+                                            @if($r->detail != "") {{ $r->details }}<br> @endif
+                                            @if($r->item)
+                                            @switch($r->item_type)
+                                                @case('App\Models\Book')
+                                                    <b>Language:</b> {{$r->item->language}}<br>
+                                                    <b>Authors:</b> {{$r->item->authors}}<br>
+                                                    <b>Publisher:</b> {{$r->item->publisher}}<br>
+                                                    <b>Publish Date:</b> {{$r->item->publish_date}}<br>
+                                                    <b>Pages:</b> {{$r->item->pages}}
+                                                    @break
+                                                @case('App\Models\Series')
+                                                    <b>Language:</b> {{$r->item->language}}<br>
+                                                    <b>Authors:</b> {{$r->item->authors}}<br>
+                                                    <b>Publisher:</b> {{$r->item->publisher}}<br>
+                                                    @break
+                                                @default
+                                            @endswitch
+                                            @endif
                                         </div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-wrap w-1/5">
@@ -103,7 +120,7 @@
                                                 <a href="{{ route('book.edit', ['book' => $r->item_id]) }}"
                                                     target="_blank"
                                                     class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-md bg-green-100 text-green-800">
-                                                    @if (isset($r->item->title)) {{ $r->item->title }} @endif
+                                                    @if (isset($r->item->clean_title)) {{ ($r->item->clean_title.", Volume ".$r->item->volume_number) }} @endif
                                                 </a>
                                                 @break
                                             @case('App\Models\Series')

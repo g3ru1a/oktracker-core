@@ -9,7 +9,9 @@ class Book extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['isbn_10', 'isbn_13', 'title', 'publish_date', 'cover_url', 'pages', 'series_id', 'volume_number', 'oneshot', 'format'];
+    protected $fillable = ['isbn_10', 'isbn_13', 'title', 'publish_date', 'cover_url',
+        'pages', 'series_id', 'volume_number', 'oneshot', 'format', 'synopsis', 'language', 'authors',
+        'publisher', 'clean_title'];
 
     public function series(){
         return $this->belongsTo(Series::class);

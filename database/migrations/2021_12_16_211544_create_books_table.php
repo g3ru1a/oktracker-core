@@ -15,7 +15,8 @@ class CreateBooksTable extends Migration
     {
         Schema::create('books', function (Blueprint $table) {
             $table->id();
-            $table->string('title');
+            $table->mediumText('title');
+            $table->mediumText('clean_title')->nullable();
             $table->string('isbn_10')->nullable();
             $table->string('isbn_13')->nullable();
             $table->string('publish_date')->nullable();
@@ -23,7 +24,13 @@ class CreateBooksTable extends Migration
             $table->string('cover_url')->default('/missing_cover.png');
             $table->integer('series_id')->nullable();
             $table->float('volume_number')->nullable();
-            $table->boolean('oneshot')->default(false);
+            
+            $table->longText("synopsis")->nullable();
+            $table->mediumText("authors")->nullable();
+            $table->string("language")->default("eng");
+            $table->mediumText("publisher")->nullable();
+            $table->string('binding')->default('paperback');
+
             $table->boolean('new')->default(true);
             $table->timestamps();
         });
