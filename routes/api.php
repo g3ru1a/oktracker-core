@@ -7,6 +7,7 @@ use App\Http\Controllers\CollectionController;
 use App\Http\Controllers\FollowController;
 use App\Http\Controllers\ISBNLookUpController;
 use App\Http\Controllers\ItemController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SocialActivityController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -44,6 +45,11 @@ Route::get('/book/{book}', [BookController::class, 'find']);
 Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'user'], function () {
     Route::get('/', [UserController::class, 'getUserInfo']);
     Route::get('/search/{query}/{page?}/{count?}', [UserController::class, 'searchUsers']);
+});
+
+Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'report'], function () {
+    Route::post('/book/{book}/', [ReportController::class, 'reportBookInfo']);
+    Route::post('/series/{series}/', [ReportController::class, 'reportSeriesInfo']);
 });
 
 Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'social'], function () {

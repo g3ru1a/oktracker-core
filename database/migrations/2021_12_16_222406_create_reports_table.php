@@ -19,8 +19,12 @@ class CreateReportsTable extends Migration
             $table->string('details')->nullable();
             $table->integer('item_id');
             $table->string('item_type');
-            $table->boolean('completed')->default(false);
+            $table->integer('priority')->default(0);
+            $table->integer('status')->default(0);
+            $table->integer('assignee_id')->nullable();
+            $table->integer('reporter_id')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

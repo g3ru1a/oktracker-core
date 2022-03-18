@@ -98,8 +98,10 @@ class ISBNLookUpController extends Controller
                 'cover_url' => $data->book->image ?? '/missing_cover.png',
                 'authors' => isset($data->book->authors) ? json_encode($data->book->authors) : null,
             ]);
+            $pp = Report::calculateBookPriorityPoints($series);
             $r = new Report();
-            $r->title = 'Validate new series: '.$series->title;
+            $r->title = 'New Series: '.$series->title;
+            $r->priority = $pp;
             $series->reports()->save($r);
         }
 
@@ -125,8 +127,11 @@ class ISBNLookUpController extends Controller
             'cover_url' => $data->book->image ?? '/missing_cover.png',
         ]);
         $series->books()->save($book);
+        $book->refresh();
+        $pp = Report::calculateBookPriorityPoints($book);
         $r = new Report();
-        $r->title = 'Validate new book: ' . $book->title;
+        $r->title = 'New Book: ' . $book->title;
+        $r->priority = $pp;
         $book->reports()->save($r);
         return Book::with('series')->find($book->id);
     }

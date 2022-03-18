@@ -23,8 +23,9 @@ class BookVendorController extends Controller
         $request->public = false;
         $bookvendor = BookVendor::create($request->all());
         $r = new Report();
-        $r->title = 'Validate new Book Vendor: ' . $bookvendor->name;
-        $r->details = 'Submitted by '.auth()->user()->name;
+        $r->title = 'New Book Vendor: ' . $bookvendor->name;
+        $r->reporter_id = auth()->user()->id;
+        $r->priority = Report::PRIORITY_POINTS["new_vendor"];
         $bookvendor->reports()->save($r);
         return response()->json(['message' => 'Book Vendor Request successfull'], 201);
     }

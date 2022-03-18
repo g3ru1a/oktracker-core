@@ -27,7 +27,7 @@ class CreateBooksTable extends Migration
             
             $table->longText("synopsis")->nullable();
             $table->mediumText("authors")->nullable();
-            $table->string("language")->default("eng");
+            $table->string("language")->nullable();
             $table->mediumText("publisher")->nullable();
             $table->string('binding')->default('paperback');
 
