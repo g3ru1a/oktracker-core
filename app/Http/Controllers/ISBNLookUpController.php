@@ -98,7 +98,7 @@ class ISBNLookUpController extends Controller
                 'cover_url' => $data->book->image ?? '/missing_cover.png',
                 'authors' => isset($data->book->authors) ? json_encode($data->book->authors) : null,
             ]);
-            $pp = Report::calculateBookPriorityPoints($series);
+            $pp = Report::calculateSeriesPriorityPoints($series);
             $r = new Report();
             $r->title = 'New Series: '.$series->title;
             $r->priority = $pp;

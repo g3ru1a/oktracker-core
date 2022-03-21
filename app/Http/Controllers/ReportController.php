@@ -13,11 +13,11 @@ class ReportController extends Controller
 {
 
     public function reportBookInfo(Book $book){
-        //TODO REPORT BOOK LOGIC
+        //TODO: REPORT BOOK LOGIC
     }
 
     public function reportSeriesInfo(Series $series){
-        //TODO REPORT SERIES LOGIC
+        //TODO: REPORT SERIES LOGIC
     }
 
     public function index()
