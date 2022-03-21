@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\BookVendor;
 use App\Models\Role;
 use Illuminate\Database\Seeder;
 
@@ -19,5 +20,8 @@ class DatabaseSeeder extends Seeder
         Role::create(['name'=>'User', 'short_name'=>'User', 'color'=> '#393B51']);
         Role::create(['name' =>'Administrator', 'short_name' => 'Admin', 'color' => '#ED474A']);
         Role::create(['name' => 'Data Analyst', 'short_name'=>'DA', 'color' => '#7C9EB2']);
+
+        //Make the default vendor
+        BookVendor::create(["name" => "Unspecified", "public" => true]);
     }
 }
