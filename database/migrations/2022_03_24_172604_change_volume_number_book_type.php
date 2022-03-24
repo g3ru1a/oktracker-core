@@ -13,7 +13,7 @@ class ChangeVolumeNumberBookType extends Migration
      */
     public function up()
     {
-        Schema::create('books', function (Blueprint $table) {
+        Schema::table('books', function (Blueprint $table) {
             $table->string('volume_number')->change();
         });
     }
