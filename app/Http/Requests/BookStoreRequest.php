@@ -31,7 +31,7 @@ class BookStoreRequest extends FormRequest
             'publish_date' => 'string|nullable',
             'pages' => 'numeric|nullable',
             'series_id' => 'string|nullable',
-            'volume_number' => 'numeric|nullable',
+            'volume_number' => 'string|nullable',
             'is_oneshot' => 'string|nullable',
             'series_id' => 'numeric|nullable',
             'format' => 'string|nullable',
