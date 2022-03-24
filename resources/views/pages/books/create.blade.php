@@ -87,7 +87,7 @@
                             </div>
                             <div class="w-1/3 ml-1">
                                 <x-jet-label for="volume_number" value="{{ __('Volume Number') }} ({{ __('Optional') }})" />
-                                <x-jet-input name="volume_number" placeholder="E.g. 10" type="number" class="mt-1 block w-full" autocomplete="volume_number" />
+                                <x-jet-input name="volume_number" placeholder="E.g. 10" type="text" class="mt-1 block w-full" autocomplete="volume_number" />
                                 <x-jet-input-error for="volume_number" class="mt-2" />
                             </div>
                         </div>
