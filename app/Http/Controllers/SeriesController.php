@@ -45,6 +45,7 @@ class SeriesController extends Controller
         $authors = explode(",", $authors);
         $request->authors = $authors;
         $request->summary = htmlspecialchars($request->summary);
+        $request->language = "[]";
         // dd($authors, $request->authors);
         $series = Series::create($request->except(["authors"]));
         $series->authors = json_encode($authors);
