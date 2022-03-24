@@ -69,7 +69,7 @@
                             </div>
                             <div class="w-1/2 ml-1">
                                 <x-jet-label for="authors" value="{{ __('Authors') }} ({{ __('Optional') }})" />
-                                <x-jet-input name="authors" value="{{ implode(', ', json_decode($book->authors)) }}" placeholder="E.g. Seiso, Mark" type="text" class="mt-1 block w-full" autocomplete="authors" />
+                                <x-jet-input name="authors" value="{{ $book->authors != null ? !=implode(', ', json_decode($book->authors)) : '' }}" placeholder="E.g. Seiso, Mark" type="text" class="mt-1 block w-full" autocomplete="authors" />
                                 <x-jet-input-error for="authors" class="mt-2" />
                             </div>
                         </div>
