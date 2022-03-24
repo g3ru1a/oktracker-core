@@ -87,7 +87,7 @@ class ISBNLookUpController extends Controller
 
         if(isset($data->book->language)){
             $language = self::ParseLanguage($data->book->language);
-        }else $language = null;
+        }else $language = "Unknown";
 
         if($series == null){
             $series = Series::create([
@@ -138,6 +138,7 @@ class ISBNLookUpController extends Controller
 
     private static function RemoveExtrasFromTitle($title){
         $ct = preg_replace('/(\s?\(.[^()]+\))+|(\s?\([0-9]+\))+/', "", $title);
+        $ct = preg_replace('/(\s?\(.[^()]+\))+|(\s?\([0-9]+\))+/', "", $ct);
         $ct = preg_replace('/(-?,?\s?[Tt]ome\s?\d+)|(,?\s?[Vv]ol\.\s?\d+)|(,?\s?[Vv]olume\s?\d+)|([\s,:-]\d{1,3}($|[^0-9\(\),]))/',
             "", $ct);
         $ct = preg_replace('/(\s(\d+)\s?:)|(,?\s?[Tt]ome\s?\d+\s?:)/',
