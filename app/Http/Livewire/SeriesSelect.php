@@ -20,7 +20,11 @@ class SeriesSelect extends Component
     public function selectSeries($series_id){
         $this->series_id = $series_id;
         $this->selected = Series::find($series_id);
-        $this->lookup = $this->selected->title;
+        if($this->selected == null) {
+            $this->clearSelection();
+        } else {
+            $this->lookup = $this->selected->title;
+        }
     }
 
     public function clearSelection(){
@@ -33,7 +37,11 @@ class SeriesSelect extends Component
     {
         if($this->series_id !== null){
             $this->selected = Series::find($this->series_id);
-            $this->lookup = $this->selected->title;
+            if ($this->selected == null) {
+                $this->clearSelection();
+            }else{
+                $this->lookup = $this->selected->title;
+            }
         }
         $series = Series::where('title', 'like', '%' . $this->lookup . '%')
             ->orderBy('updated_at', 'desc')->paginate($this->count);

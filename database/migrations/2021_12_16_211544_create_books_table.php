@@ -23,7 +23,7 @@ class CreateBooksTable extends Migration
             $table->integer('pages')->nullable();
             $table->string('cover_url')->default('/missing_cover.png');
             $table->integer('series_id')->nullable();
-            $table->float('volume_number')->nullable();
+            $table->string('volume_number')->nullable();
             
             $table->longText("synopsis")->nullable();
             $table->mediumText("authors")->nullable();
