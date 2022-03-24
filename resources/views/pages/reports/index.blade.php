@@ -101,9 +101,7 @@
                                         <b>Pages:</b> {{$r->item->pages}}
                                         @break
                                         @case('App\Models\Series')
-                                        <b>Language:</b> {{$r->item->language}}<br>
                                         <b>Authors:</b> {{$r->item->authors}}<br>
-                                        <b>Publisher:</b> {{$r->item->publisher}}<br>
                                         @break
                                         @default
                                         @endswitch
