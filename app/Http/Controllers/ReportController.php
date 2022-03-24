@@ -28,7 +28,7 @@ class ReportController extends Controller
         if(auth()->user()->role_id == Role::DATA_ANALYST){
             $reports = $reports->where('assignee_id', auth()->user()->id);
         }
-        $reports = $reports->paginate(15);
+        $reports = $reports->orderBy("priority", "desc")->paginate(15);
         $available_reports = Report::where('status', [Report::STATUS_CREATED, Report::STATUS_ASSIGNED])->where('assignee_id', null)->count();
         return view('pages.reports.index', [
             'reports' => $reports,
@@ -41,7 +41,7 @@ class ReportController extends Controller
         $this->authorize('take_batch', Report::class);
 
         if($batch_size > 20) $batch_size = 20;
-        $reports = Report::where('status', Report::STATUS_CREATED)->where('assignee_id', null)->take($batch_size);
+        $reports = Report::where('status', Report::STATUS_CREATED)->where('assignee_id', null)->orderBy("priority", "desc")->take($batch_size);
         $reports->update(['assignee_id' => Auth::user()->id, 'status' => Report::STATUS_ASSIGNED]);
         return redirect(route('reports.index'));
     }

@@ -27,6 +27,7 @@ class SocialActivityResource extends JsonResource
         }
         $likes = $this->likes()->count();
         $liked = $this->likes()->where("user_id", Auth::user()->id)->exists();
+        $book = $this->item->book;
         return [
             'id' => $this->id,
             'user_id' => $this->user_id,
@@ -34,7 +35,7 @@ class SocialActivityResource extends JsonResource
             'pfp_url' => $pfp_path,
             'created_at' => $this->created_at,
             // 'item' => ItemResource::make($this->item),
-            'book_title' => $this->item->book->title,
+            'book_title' => $book->clean_title . ($book->volume_number != null ? ", ".$book->volume_number : ""),
             'book_cover_url' => $cover_url,
             'vendor_name' => ($this->item->vendor->id == 1) ? null : $this->item->vendor->name,
             'price' => $this->item->price,
