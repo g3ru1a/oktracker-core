@@ -29,6 +29,8 @@
                             <textarea name="summary" id="summary" placeholder="Lorem ipsum dolor sit amet, consectetur adipiscing elit. In ultrices nibh ut justo auctor mollis. Nulla varius consectetur nunc, sed dapibus diam." class="w-full placeholder:italic border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm"></textarea>
                         </div>
 
+                        <input type="hidden" name="language" value="[]">
+
                         <div class="mt-2 flex">
                             <!-- <div class="w-1/4 mr-1">
                                 <x-jet-label for="publisher" value="{{ __('Publisher') }} ({{ __('Optional') }})" />
