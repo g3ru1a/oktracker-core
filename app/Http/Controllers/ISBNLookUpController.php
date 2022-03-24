@@ -37,6 +37,7 @@ class ISBNLookUpController extends Controller
 
         $r = new Report();
         $r->title = "Collect book info for isbn: " . $isbn;
+        $r->priority = 50;
         $book->reports()->save($r);
     }
 
