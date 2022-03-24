@@ -68,7 +68,7 @@
                                     </div>
                                     <div class="ml-4">
                                         <div class="text-sm font-medium text-gray-900">
-                                            {{ $b->title }}
+                                            {{ $b->clean_title }}
                                         </div>
                                         @if ($b->series_id != null && isset($b->series->title))
                                             <div class="text-sm text-gray-500">
