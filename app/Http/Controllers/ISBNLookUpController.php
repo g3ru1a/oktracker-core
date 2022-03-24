@@ -23,8 +23,8 @@ class ISBNLookUpController extends Controller
             $book = self::lookupISBNAPI($isbn);
         }
         if($book == false){
-            self::makeMissingBookReport($isbn);
-            return response()->json('No book found.', 404);
+            $book = self::makeMissingBookReport($isbn);
+            return BookResource::make($book);
         }else return BookResource::make($book);
     }
 
@@ -39,6 +39,7 @@ class ISBNLookUpController extends Controller
         $r->title = "Collect book info for isbn: " . $isbn;
         $r->priority = 50;
         $book->reports()->save($r);
+        return $book;
     }
 
     /**
