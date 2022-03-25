@@ -15,6 +15,19 @@ class BookVendorController extends Controller
 
     //**API FUNCTIONS */
 
+    /**
+     * Get a bulk of books information, max 100 at once.
+     */
+    public function findBulk(Request $request)
+    {
+        if (!isset($request->vendor_ids)) return response()->json(["Missing Vendor IDs"], 422);
+        $vendor_ids = json_decode($request->vendor_ids);
+        if (count($vendor_ids) > 100) return response()->json(["Too Many IDs"], 422);
+        $vendor_ids = array_unique($vendor_ids);
+        $vendors = BookVendor::findMany($vendor_ids);
+        return response()->json($vendors, 200);
+    }
+
     public function getAll(){
         return response()->json(BookVendor::where('public', true)->get(), 200);
     }
