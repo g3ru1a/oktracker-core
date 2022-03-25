@@ -25,7 +25,9 @@ class BookVendorController extends Controller
         if (count($vendor_ids) > 100) return response()->json(["Too Many IDs"], 422);
         $vendor_ids = array_unique($vendor_ids);
         $vendors = BookVendor::findMany($vendor_ids);
-        return BookVendorResource::collection($vendors);
+        return response()->json([
+            "data" => $vendors
+        ], 200);
     }
 
     public function getAll(){
