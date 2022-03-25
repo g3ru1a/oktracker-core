@@ -19,8 +19,13 @@ class BookTableList extends Component
 
     public function render()
     {
-        $books = Book::where('title', 'like', '%'.$this->lookup.'%')
-            ->orderBy('updated_at', 'desc')->paginate($this->count);
+        $lookupST = htmlspecialchars($this->lookup);
+        if($lookupST != "") {
+            $books = Book::whereRaw("CONCAT_WS(', ', `clean_title`, `volume_number`) LIKE '%?%'", [$lookupST])->orWhereNull('clean_title')
+                ->orderBy('updated_at', 'desc')->paginate($this->count);
+        }else{
+            $books = Book::orderBy('updated_at', 'desc')->paginate($this->count);
+        }
 
         return view('livewire.book-table-list',[
             'books' => $books
