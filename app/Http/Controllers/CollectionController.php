@@ -46,7 +46,7 @@ class CollectionController extends Controller
     public function store(CollectionRequest $request)
     {
         $user = Auth::user();
-        if ($user->role_id === Role::USER && count($user->collections) >= 3) {
+        if ($user->role_id === Role::USER && count($user->collections) >= 5) {
             return response()->json(["message" => "Collection Limit Reached"]);
         }
         try {
