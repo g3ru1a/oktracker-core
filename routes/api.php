@@ -82,7 +82,7 @@ Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'vendors'], function()
 Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'collection'], function() {
     Route::get('/list', [CollectionController::class, 'list']);
     Route::get('/find/{collection}', [CollectionController::class, 'find']);
-    Route::get('/items/{collection}', [CollectionController::class, 'items']);
+    Route::get('/items/{collection}/{page?}/{count?}', [CollectionController::class, 'items']);
     Route::post('/add', [CollectionController::class, 'store']);
     Route::post('/update/{collection}', [CollectionController::class, 'update']);
     Route::post('/destroy/{collection}', [CollectionController::class, 'destroy']);
