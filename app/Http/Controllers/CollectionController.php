@@ -6,6 +6,7 @@ use App\Http\Requests\CollectionRequest;
 use App\Http\Resources\CollectionResource;
 use App\Http\Resources\ItemResourceShort;
 use App\Models\Collection;
+use App\Models\Item;
 use App\Models\Role;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -19,9 +20,23 @@ class CollectionController extends Controller
     }
 
 
-    public function items(Collection $collection){
+    public function items(Collection $collection, $page = 1, $count = 20){
         if ($collection->user->id == auth()->user()->id) {
-            return ItemResourceShort::collection($collection->items);
+
+            $items = Item::where('collection_id', $collection->id)->take($count)->get();
+            $max_pages = Item::where('collection_id', $collection->id)->count() / $count;
+            $max_pages = ceil($max_pages);
+
+            $pagination_result = [
+                "max_pages" => $max_pages,
+                "prev_page" => ($page > 1) ? $page - 1 : null,
+                "next_page" => ($page + 1 <= $max_pages) ? $page + 1 : null,
+            ];
+
+            return [
+                "items" => ItemResourceShort::collection($items),
+                ...$pagination_result
+            ];
         } else return response()->json(['message' => 'Cannot access this resource.'], 401);
     }
 

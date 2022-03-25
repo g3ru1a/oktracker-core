@@ -40,7 +40,10 @@ Route::group(['prefix' => 'auth'], function (){
 });
 
 Route::get('/isbn/{isbn}', [ISBNLookUpController::class, 'lookup']);
+
+Route::post('/book/bulk', [BookController::class, 'findBulk'])->middleware(["auth:sanctum"]);
 Route::get('/book/{book}', [BookController::class, 'find']);
+
 
 Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'user'], function () {
     Route::get('/', [UserController::class, 'getUserInfo']);

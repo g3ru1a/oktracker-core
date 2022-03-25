@@ -12,6 +12,18 @@ class BookController extends Controller
 {
 
     /**
+     * Get a bulk of books information, max 100 at once.
+     */
+    public function findBulk(Request $request){
+        if(!isset($request->book_ids)) return response()->json([], 422);
+        $book_ids = json_decode($request->book_ids);
+        if(count($book_ids) > 100) return response()->json([], 422);
+        $book_ids = array_unique($book_ids);
+        $books = Book::findMany($book_ids);
+        return BookResource::collection($books);
+    }
+
+    /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
