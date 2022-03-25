@@ -13,6 +13,9 @@ class ISBNLookUpController extends Controller
 {
     function lookup($isbn){
         $isbn = preg_replace('/[^0-9.]+/', '', $isbn);
+        if(substr($isbn, 0, 2) != "97") {
+            return response()->json('Wrong ISBN Format', 422);
+        }
         switch(strlen($isbn)){
             case 10: $book = self::lookupISBN10($isbn);break;
             case 13: $book = self::lookupISBN13($isbn);break;

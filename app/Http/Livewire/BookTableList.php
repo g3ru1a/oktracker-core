@@ -21,7 +21,9 @@ class BookTableList extends Component
     {
         $lookupST = htmlspecialchars($this->lookup);
         if($lookupST != "") {
-            $books = Book::whereRaw("CONCAT_WS(', ', `clean_title`, `volume_number`) LIKE '%?%'", [$lookupST])->orWhereNull('clean_title')
+            $lookupJ = implode("%",explode(" ", $lookupST));
+            $lookupJ = '%'.$lookupJ.'%';
+            $books = Book::whereRaw("CONCAT_WS(',', `clean_title`, `volume_number`) LIKE ?", [$lookupJ])
                 ->orderBy('updated_at', 'desc')->paginate($this->count);
         }else{
             $books = Book::orderBy('updated_at', 'desc')->paginate($this->count);
