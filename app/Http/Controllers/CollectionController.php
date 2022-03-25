@@ -20,7 +20,7 @@ class CollectionController extends Controller
     }
 
 
-    public function items(Collection $collection, $page = 1, $count = 20){
+    public function items(Collection $collection, $page = 1, $count = 500){
         if ($collection->user->id == auth()->user()->id) {
 
             $items = Item::where('collection_id', $collection->id)->take($count)->get();
