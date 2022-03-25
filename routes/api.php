@@ -72,7 +72,7 @@ Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'social'], function ()
 
 Route::get('/vendors', [BookVendorController::class, 'getAll']);
 Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'vendors'], function() {
-    Route::get('/bulk', [BookVendorController::class, 'findBulk']);
+    Route::post('/bulk', [BookVendorController::class, 'findBulk']);
     Route::get('/private', [BookVendorController::class, 'getPrivate']);
     Route::post('/private', [BookVendorController::class, 'createPrivate']);
     Route::put('/private/{vendor}', [BookVendorController::class, 'updatePrivate']);
