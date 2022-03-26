@@ -13,9 +13,10 @@ use Storage;
 
 class ISBNLookUpController extends Controller
 {
+
     function lookup($isbn){
         $isbn = preg_replace('/[^0-9.]+/', '', $isbn);
-        if(substr($isbn, 0, 2) != "97") {
+        if(strlen($isbn) == 13 && substr($isbn, 0, 2) != "97") {
             return response()->json('Wrong ISBN Format', 422);
         }
         switch(strlen($isbn)){
