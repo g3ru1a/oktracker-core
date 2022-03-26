@@ -7,6 +7,8 @@ use App\Http\Resources\BookResource;
 use App\Models\Book;
 use App\Models\Series;
 use Illuminate\Http\Request;
+use Intervention\Image\ImageManagerStatic as Image;
+use Storage;
 
 class BookController extends Controller
 {
@@ -79,9 +81,18 @@ class BookController extends Controller
 
         if ($request->hasFile('cover')) {
             $originalExtension = $request->file('cover')->getClientOriginalExtension();
-            $filename = 'cover'. $originalExtension;
-            $path = $request->file('cover')->storeAs('public/books/'.$book->id, $filename);
-            $book->cover_url = '/' . str_replace('public', 'storage', $path);
+            
+            $img = Image::make($request->file('cover'))->resize(300, null, function ($constraint) {
+                $constraint->aspectRatio();
+            })->encode('jpg', 90);
+
+
+            $filename = 'cover.' . $originalExtension;
+            $path = '/books/' . $book->id . '/' . $filename;
+
+            Storage::disk('public')->put($path, $img);
+
+            $book->cover_url = '/storage' . $path;
             $book->save();
         }
         return redirect(route('book.index'));
@@ -136,13 +147,21 @@ class BookController extends Controller
         if ($request->hasFile('cover')) {
             $originalExtension = $request->file('cover')->getClientOriginalExtension();
 
-            if (file_exists(public_path() . 'books/' . $book->id . '/cover' . $originalExtension)) {
-                unlink(public_path() . 'books/' . $book->id . '/cover' . $originalExtension);
+            if (file_exists(public_path() . 'books/' . $book->id . '/cover.' . $originalExtension)) {
+                unlink(public_path() . 'books/' . $book->id . '/cover.' . $originalExtension);
             }
 
-            $filename = 'cover' . $originalExtension;
-            $path = $request->file('cover')->storeAs('public/books/' . $book->id, $filename);
-            $book->cover_url = '/' . str_replace('public', 'storage', $path);
+            $img = Image::make($request->file('cover'))->resize(300, null, function ($constraint) {
+                $constraint->aspectRatio();
+            })->encode('jpg', 90);
+
+
+            $filename = 'cover.' . $originalExtension;
+            $path = '/books/' . $book->id . '/'.$filename;
+
+            Storage::disk('public')->put($path, $img);
+
+            $book->cover_url = '/storage' . $path;
             $book->save();
         }
         return redirect(route('book.index'));

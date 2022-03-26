@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Requests\SeriesStoreRequest;
 use App\Models\Series;
 use Illuminate\Http\Request;
+use Storage;
+use Intervention\Image\ImageManagerStatic as Image;
 
 class SeriesController extends Controller
 {
@@ -52,9 +54,17 @@ class SeriesController extends Controller
         $series->save();
         if($request->hasFile('cover')){
             $originalExtension = $request->file('cover')->getClientOriginalExtension();
-            $filename = 'cover'.$originalExtension;
-            $path = $request->file('cover')->storeAs('public/series/'.$series->id, $filename);
-            $series->cover_url = '/' . str_replace('public', 'storage', $path);
+            $img = Image::make($request->file('cover'))->resize(300, null, function ($constraint) {
+                $constraint->aspectRatio();
+            })->encode('jpg', 90);
+
+
+            $filename = 'cover.' . $originalExtension;
+            $path = '/series/' . $series->id . '/' . $filename;
+
+            Storage::disk('public')->put($path, $img);
+
+            $series->cover_url = '/storage' . $path;
             $series->save();
         }
         return redirect(route('series.index'));
@@ -110,9 +120,17 @@ class SeriesController extends Controller
                 unlink(public_path() . 'series/' . $series->id . '/cover' . $originalExtension);
             }
 
-            $filename = 'cover' . $originalExtension;
-            $path = $request->file('cover')->storeAs('public/series/'.$series->id, $filename);
-            $series->cover_url = '/' . str_replace('public', 'storage', $path);
+            $img = Image::make($request->file('cover'))->resize(300, null, function ($constraint) {
+                $constraint->aspectRatio();
+            })->encode('jpg', 90);
+
+
+            $filename = 'cover.' . $originalExtension;
+            $path = '/series/' . $series->id . '/' . $filename;
+
+            Storage::disk('public')->put($path, $img);
+
+            $series->cover_url = '/storage' . $path;
             $series->save();
         }
         return redirect(route('series.index'));

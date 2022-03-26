@@ -8,6 +8,8 @@ use App\Models\Series;
 use Illuminate\Http\Request;
 use App\Models\Report;
 use Illuminate\Support\Facades\Http;
+use Intervention\Image\ImageManagerStatic as Image;
+use Storage;
 
 class ISBNLookUpController extends Controller
 {
@@ -81,6 +83,7 @@ class ISBNLookUpController extends Controller
         $data = json_decode($response->getBody());
         $clean_title = self::RemoveExtrasFromTitle($data->book->title_long);
         $volume_number = self::GetVolumeNumber($data->book->title_long);
+        $cover_url = self::processCover($data->book->image);
         // dd([$data->book->title_long,$volume_number, $clean_title]);
         $series = Series::where('title', 'like', '%'.$clean_title.'%')->first();
 
@@ -100,7 +103,7 @@ class ISBNLookUpController extends Controller
                 'language' => json_encode([$language ?? ""]),
                 'publisher' => json_encode([$data->book->publisher ?? ""]),
                 'summary' => $synopsis,
-                'cover_url' => $data->book->image ?? '/missing_cover.png',
+                'cover_url' => $cover_url,
                 'authors' => isset($data->book->authors) ? json_encode($data->book->authors) : null,
             ]);
             $pp = Report::calculateSeriesPriorityPoints($series);
@@ -114,7 +117,7 @@ class ISBNLookUpController extends Controller
             $date_pub = new \DateTime($data->book->date_published);
             $date_pub = $date_pub->format("Y-m-d");
         }else $date_pub = null;
-
+        
         $book = Book::create([
             'isbn_10' => $data->book->isbn,
             'isbn_13' => $data->book->isbn13,
@@ -129,7 +132,7 @@ class ISBNLookUpController extends Controller
             'authors' => json_encode($data->book->authors) ?? null,
             'publisher' => $data->book->publisher ?? null,
             'language' => $language,
-            'cover_url' => $data->book->image ?? '/missing_cover.png',
+            'cover_url' => $cover_url,
         ]);
         $series->books()->save($book);
         $book->refresh();
@@ -139,6 +142,19 @@ class ISBNLookUpController extends Controller
         $r->priority = $pp;
         $book->reports()->save($r);
         return Book::with('series')->find($book->id);
+    }
+
+    private static function processCover($cover_url){
+        if($cover_url == null) return '/missing_cover.png';
+        $filename = self::generateRandomString().basename($cover_url);
+
+        $path = "/images_from_api/" . $filename;
+
+        $img = Image::make($cover_url)->encode('jpg', 75)->stream('jpg', 90);
+
+        Storage::disk('public')->put($path, $img);
+
+        return '/storage'.$path;
     }
 
     private static function RemoveExtrasFromTitle($title){
@@ -160,7 +176,21 @@ class ISBNLookUpController extends Controller
         $lang_code = explode("_", $lang)[0];
         return $lang_code;
     }
+
+    private static function generateRandomString($length = 10)
+    {
+        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $charactersLength = strlen($characters);
+        $randomString = '';
+        for ($i = 0; $i < $length; $i++) {
+            $randomString .= $characters[rand(0, $charactersLength - 1)];
+        }
+        return $randomString;
+    }
 }
+
+
+
 //9784040646176
 
 //9781421526690
