@@ -12,6 +12,16 @@ class Collection extends Model
 
     protected $fillable = ['name', 'total_books', 'total_cost', 'currency'];
 
+    public static function boot()
+    {
+        parent::boot();
+
+        static::deleting(function ($collection) { // before delete() method call this
+            $collection->items()->delete();
+            SocialActivity::where("collection_id", $collection->id)->delete();
+        });
+    }
+
     public function user(){
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
