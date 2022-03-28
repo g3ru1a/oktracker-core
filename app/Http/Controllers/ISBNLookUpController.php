@@ -113,19 +113,20 @@ class ISBNLookUpController extends Controller
         $pull_cover = $data != false && $data["cover_url"] == null;
         $data_sc = self::scrapeAmazonISBN($isbn, $pull_cover);
 
+        if($data == false && $data_sc == false) return false;
 
-        if($data == false) return $data_sc;
+        if($data != false) {
+            $keys = array_keys($data_sc);
+            foreach ($keys as $key) {
+                if ($data[$key] == null && $data_sc[$key] != null) $data[$key] = $data_sc[$key];
+            }
 
-        $keys = array_keys($data_sc);
-        foreach($keys as $key){
-            if($data[$key] == null && $data_sc[$key] != null) $data[$key] = $data_sc[$key];
-        }
+            if ($data_sc["cover_url"] != null) {
+                $data["cover_url"] = $data_sc["cover_url"];
+            }
+        }else $data = $data_sc;
 
-        if($data_sc["cover_url"] != null){
-            $data["cover_url"] = $data_sc["cover_url"];
-        }
         $data["cover_url"] = self::processCover($data["cover_url"]);
-
         return $data;
     }
 
@@ -136,7 +137,7 @@ class ISBNLookUpController extends Controller
             throw new ProcessFailedException($process);
         }
         $data_sc = json_decode($process->getOutput());
-
+        if($data_sc == "[]") return false;
         $clean_title = self::RemoveExtrasFromTitle($data_sc->title);
         $volume_number = self::GetVolumeNumber($data_sc->title);
         $data_sc->language = ($data_sc->language == null) ? "Unknown" : $data_sc->language;
