@@ -17,7 +17,7 @@ class Collection extends Model
         parent::boot();
 
         static::deleting(function ($collection) { // before delete() method call this
-            $collection->items()->delete();
+            $collection->items->each->delete();
             $collection->delete();
         });
     }
