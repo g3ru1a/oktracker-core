@@ -29,7 +29,9 @@ class ISBNLookUpController extends Controller
         }
         if($book == false){
             $data = self::findBookData($isbn);
-            if($data != false){
+            if($data != false) {
+                if (strlen($isbn) == 13) $data["isbn_13"] = $isbn;
+                if (strlen($isbn) == 10) $data["isbn_10"] = $isbn;
                 $book = self::makeBookFromData($data);
             }else{
                 $book = self::makeMissingBookReport($isbn);
