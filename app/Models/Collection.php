@@ -19,6 +19,8 @@ class Collection extends Model
         static::deleting(function ($collection) { // before delete() method call this
             $collection->items->each->delete();
             $collection->delete();
+
+            return true;
         });
     }
 
