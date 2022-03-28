@@ -19,8 +19,6 @@ class Item extends Model
 
         static::deleting(function ($item) { // before delete() method call this
             $item->activity()->delete();
-            $item->delete();
-            
             return true;
         });
     }
