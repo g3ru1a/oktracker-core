@@ -221,15 +221,18 @@ class ISBNLookUpController extends Controller
     }
 
     private static function RemoveExtrasFromTitle($title){
-        $ct = preg_replace('/(\s?\(.[^()]+\))+|(\s?\([0-9]+\))+/', "", $title);
-        $ct = preg_replace('/(\s?\(.[^()]+\))+|(\s?\([0-9]+\))+/', "", $ct);
+        $ct = preg_replace('/[（]+/', "(", $title); //normalize brackets
+        $ct = preg_replace('/[）]+/', ")", $ct); //normalize brackets
+        $ct = preg_replace('/(\s?\(.[^()]+\))+|(\s?\([0-9]+\))+/', "", $ct); //clear brackets
+        $ct = preg_replace('/(\s?\(.[^()]+\))+|(\s?\([0-9]+\))+/', "", $ct); //clear brackets parse 2
         $ct = preg_replace('/(-?,?\s?[Tt]ome\s?\d+)|(,?\s?[Vv]ol\.\s?\d+)|(,?\s?[Vv]olume\s?\d+)|([\s,:-]\d{1,3}($|[^0-9\(\),]))/',
-            "", $ct);
+            "", $ct); //clear volume number
         $ct = preg_replace('/(\s(\d+)\s?:)|(,?\s?[Tt]ome\s?\d+\s?:)/',
-            ":", $ct);
+            ":", $ct); //clear volume nr and leave :
         $ct = preg_replace(
             '/([ \t]+$)|(^\s+)/',
-            "", $ct);
+            "", $ct); // clear whitespace trailing and leading
+        
         return $ct;
     }
 
