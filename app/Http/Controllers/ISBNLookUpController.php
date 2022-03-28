@@ -10,13 +10,15 @@ use App\Models\Report;
 use Illuminate\Support\Facades\Http;
 use Intervention\Image\ImageManagerStatic as Image;
 use Storage;
+use Symfony\Component\Process\Process;
+use Symfony\Component\Process\Exception\ProcessFailedException;
 
 class ISBNLookUpController extends Controller
 {
 
     function lookup($isbn){
         $isbn = preg_replace('/[^0-9.]+/', '', $isbn);
-        if(strlen($isbn) == 13 && substr($isbn, 0, 2) != "97") {
+        if(strlen($isbn) == 13 && (substr($isbn, 0, 3) != "978" && substr($isbn, 0, 3) != "979")) {
             return response()->json('Wrong ISBN Format', 422);
         }
         switch(strlen($isbn)){
@@ -26,12 +28,15 @@ class ISBNLookUpController extends Controller
                 return response()->json('Wrong ISBN Format', 422);
         }
         if($book == false){
-            $book = self::lookupISBNAPI($isbn);
+            $data = self::findBookData($isbn);
+            if($data != false){
+                $book = self::makeBookFromData($data);
+            }else{
+                $book = self::makeMissingBookReport($isbn);
+                return BookResource::make($book);
+            }
         }
-        if($book == false){
-            $book = self::makeMissingBookReport($isbn);
-            return BookResource::make($book);
-        }else return BookResource::make($book);
+        return BookResource::make($book);
     }
 
     private static function makeMissingBookReport($isbn){
@@ -71,8 +76,90 @@ class ISBNLookUpController extends Controller
         return false;
     }
 
+    private static function makeBookFromData($data){
+        $series = Series::where('title', 'like', '%' . $data[ "clean_title"] . '%')->first();
+
+        if ($series == null) {
+            $series = Series::create([
+                'title' => $data["clean_title"],
+                'language' => json_encode([$data["language"] ?? ""]),
+                'publisher' => json_encode([$data["publisher"] ?? ""]),
+                'summary' => $data["synopsis"],
+                'cover_url' => $data["cover_url"],
+                'authors' => isset($data["authors"]) ? $data["authors"] : null,
+            ]);
+            $pp = Report::calculateSeriesPriorityPoints($series);
+            $r = new Report();
+            $r->title = 'New Series: ' . $series->title;
+            $r->priority = $pp;
+            $series->reports()->save($r);
+        }
+
+        $book = Book::create($data);
+
+        $series->books()->save($book);
+        $book->refresh();
+        $pp = Report::calculateBookPriorityPoints($book);
+        $r = new Report();
+        $r->title = 'New Book: ' . $book->title;
+        $r->priority = $pp;
+        $book->reports()->save($r);
+        return Book::with('series')->find($book->id);
+    }
+
+    private static function findBookData($isbn){
+        $data = self::lookupISBNAPI($isbn);
+
+        $pull_cover = $data != false && $data["cover_url"] == null;
+        $data_sc = self::scrapeAmazonISBN($isbn, $pull_cover);
+
+
+        if($data == false) return $data_sc;
+
+        $keys = array_keys($data_sc);
+        foreach($keys as $key){
+            if($data[$key] == null && $data_sc[$key] != null) $data[$key] = $data_sc[$key];
+        }
+
+        if($data_sc["cover_url"] != null){
+            $data["cover_url"] = $data_sc["cover_url"];
+        }
+        $data["cover_url"] = self::processCover($data["cover_url"]);
+
+        return $data;
+    }
+
+    private static function scrapeAmazonISBN($isbn, $pull_cover = false){
+        $process = new Process(['python3', env("SCRAPER_PATH"), $isbn]);
+        $process->run();
+        if (!$process->isSuccessful()) {
+            throw new ProcessFailedException($process);
+        }
+        $data_sc = json_decode($process->getOutput());
+
+        $clean_title = self::RemoveExtrasFromTitle($data_sc->title);
+        $volume_number = self::GetVolumeNumber($data_sc->title);
+        $data_sc->language = ($data_sc->language == null) ? "Unknown" : $data_sc->language;
+
+        return [
+            'isbn_10' => $data_sc->isbn_10,
+            'isbn_13' => $data_sc->isbn_13,
+            'title' => $data_sc->title,
+            'clean_title' => $clean_title,
+            'pages' => $data_sc->pages ?? null,
+            'synopsis' => $data_sc->synopsis,
+            'volume_number' => $volume_number,
+            'publish_date' => null,
+            'binding' => $data_sc->binding ?? "paperback",
+            'authors' => json_encode($data_sc->authors) ?? null,
+            'publisher' => $data_sc->publisher ?? null,
+            'language' => $data_sc->language,
+            'cover_url' => $data_sc->cover_url,
+        ];
+    }
+
     /**
-     * @return Book|boolean
+     * @return Object|boolean
      */
     private static function lookupISBNAPI($isbn){
         $response = Http::withHeaders([
@@ -84,9 +171,6 @@ class ISBNLookUpController extends Controller
         $data = json_decode($response->getBody());
         $clean_title = self::RemoveExtrasFromTitle($data->book->title_long);
         $volume_number = self::GetVolumeNumber($data->book->title_long);
-        $cover_url = self::processCover($data->book->image);
-        // dd([$data->book->title_long,$volume_number, $clean_title]);
-        $series = Series::where('title', 'like', '%'.$clean_title.'%')->first();
 
         if(isset($data->book->overview)){
             $synopsis = htmlspecialchars($data->book->overview);
@@ -98,28 +182,12 @@ class ISBNLookUpController extends Controller
             $language = self::ParseLanguage($data->book->language);
         }else $language = "Unknown";
 
-        if($series == null){
-            $series = Series::create([
-                'title' => $clean_title,
-                'language' => json_encode([$language ?? ""]),
-                'publisher' => json_encode([$data->book->publisher ?? ""]),
-                'summary' => $synopsis,
-                'cover_url' => $cover_url,
-                'authors' => isset($data->book->authors) ? json_encode($data->book->authors) : null,
-            ]);
-            $pp = Report::calculateSeriesPriorityPoints($series);
-            $r = new Report();
-            $r->title = 'New Series: '.$series->title;
-            $r->priority = $pp;
-            $series->reports()->save($r);
-        }
-
         if(isset($data->book->date_published)){
             $date_pub = new \DateTime($data->book->date_published);
             $date_pub = $date_pub->format("Y-m-d");
         }else $date_pub = null;
         
-        $book = Book::create([
+        return [
             'isbn_10' => $data->book->isbn,
             'isbn_13' => $data->book->isbn13,
             'title' => $data->book->title_long,
@@ -128,21 +196,12 @@ class ISBNLookUpController extends Controller
             'synopsis' => $synopsis,
             'volume_number' => $volume_number,
             'publish_date' => $date_pub,
-            'pages' => $data->book->pages ?? null,
             'binding' => $data->book->binding ?? "paperback",
             'authors' => json_encode($data->book->authors) ?? null,
             'publisher' => $data->book->publisher ?? null,
             'language' => $language,
-            'cover_url' => $cover_url,
-        ]);
-        $series->books()->save($book);
-        $book->refresh();
-        $pp = Report::calculateBookPriorityPoints($book);
-        $r = new Report();
-        $r->title = 'New Book: ' . $book->title;
-        $r->priority = $pp;
-        $book->reports()->save($r);
-        return Book::with('series')->find($book->id);
+            'cover_url' => $data->book->image,
+        ];
     }
 
     private static function processCover($cover_url){
@@ -165,6 +224,9 @@ class ISBNLookUpController extends Controller
             "", $ct);
         $ct = preg_replace('/(\s(\d+)\s?:)|(,?\s?[Tt]ome\s?\d+\s?:)/',
             ":", $ct);
+        $ct = preg_replace(
+            '/([ \t]+$)|(^\s+)/',
+            "", $ct);
         return $ct;
     }
 
