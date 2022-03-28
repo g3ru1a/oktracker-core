@@ -17,7 +17,7 @@ class ISBNLookUpController extends Controller
 {
 
     function lookup($isbn){
-        $isbn = preg_replace('/[^0-9.]+/', '', $isbn);
+        $isbn = preg_replace('/\D+/', '', $isbn);
         if(strlen($isbn) == 13 && (substr($isbn, 0, 3) != "978" && substr($isbn, 0, 3) != "979")) {
             return response()->json('Wrong ISBN Format', 422);
         }
@@ -143,8 +143,8 @@ class ISBNLookUpController extends Controller
         $data_sc->language = ($data_sc->language == null) ? "Unknown" : $data_sc->language;
 
         return [
-            'isbn_10' => $data_sc->isbn_10,
-            'isbn_13' => $data_sc->isbn_13,
+            'isbn_10' => preg_replace('/\D+/', '', $data_sc->isbn_10),
+            'isbn_13' => preg_replace('/\D+/', '', $data_sc->isbn_13),
             'title' => $data_sc->title,
             'clean_title' => $clean_title,
             'pages' => $data_sc->pages ?? null,
@@ -189,8 +189,8 @@ class ISBNLookUpController extends Controller
         }else $date_pub = null;
         
         return [
-            'isbn_10' => $data->book->isbn,
-            'isbn_13' => $data->book->isbn13,
+            'isbn_10' => preg_replace('/\D+/', '', $data->book->isbn),
+            'isbn_13' => preg_replace('/\D+/', '', $data->book->isbn13),
             'title' => $data->book->title_long,
             'clean_title' => $clean_title,
             'pages' => $data->book->pages ?? null,
