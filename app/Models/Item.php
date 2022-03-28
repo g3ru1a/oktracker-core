@@ -13,6 +13,16 @@ class Item extends Model
 
     protected $fillable = ['book_id', 'collection_id', 'vendor_id', 'price', 'bought_on', 'arrived'];
 
+    public static function boot()
+    {
+        parent::boot();
+
+        static::deleting(function ($item) { // before delete() method call this
+            $item->activity()->delete();
+            $item->delete();
+        });
+    }
+
     public function setBoughtOnAttribute($value)
     {
         $this->attributes['bought_on'] = (new Carbon($value))->format('Y-m-d H:i:s');

@@ -18,7 +18,7 @@ class Collection extends Model
 
         static::deleting(function ($collection) { // before delete() method call this
             $collection->items()->delete();
-            SocialActivity::where("collection_id", $collection->id)->delete();
+            $collection->delete();
         });
     }
 
