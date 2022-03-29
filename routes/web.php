@@ -37,7 +37,8 @@ Route::prefix('/mm')->middleware(['auth', 'verified'])->group(function(){
     Route::resource('bookvendors', BookVendorController::class);
 
     Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
-    Route::get('/reports/batch/{batch_size}', [ReportController::class, 'take_batch'])->name('reports.take_batch');
+    Route::post('/reports/batch/', [ReportController::class, 'take_batch'])->name('reports.take_batch');
+    Route::put('/reports/drop/{report}', [ReportController::class, 'drop'])->name('reports.drop');
     Route::put('/reports/{report}', [ReportController::class, 'complete'])->name('reports.complete');
     Route::delete('/reports/{report}', [ReportController::class, 'destroy'])->name('reports.destroy');
     Route::delete('/reports/assignee/{report}', [ReportController::class, 'remove_assignee'])->name('reports.remove_assignee');

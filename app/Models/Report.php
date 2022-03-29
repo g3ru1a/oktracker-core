@@ -14,9 +14,20 @@ class Report extends Model
     protected $fillable = ['title', 'details', 'status', 'priority', 'assignee_id',
      'reporter_id', 'item_id', 'item_type'];
 
+    public const TYPE = [
+        "ANY" => 1,
+        "COLLECT" => 2,
+        "USER_REPORT" => 3,
+        "IMPORTANT" => 4,
+        "MINOR" => 5,
+        "CLEAN" => 6,
+        "SEVERE" => 7
+    ];
+    
     public const STATUS_CREATED = 0;
     public const STATUS_ASSIGNED = 1;
     public const STATUS_COMPLETED = 2;
+    public const STATUS_DROPPED = 3;
 
     public const PRIORITY_POINTS = [
         "title" => 5,
@@ -37,7 +48,8 @@ class Report extends Model
         "AWAITING_REVIEW" => 0,
         "MINOR_ISSUES" => 1,
         "IMPORTANT_ISSUES" => 5,
-        "SEVERE_ISSUES" => 10
+        "SEVERE_ISSUES" => 10,
+        "COLLECT_DATA" => 50,
     ];
 
     public function item()

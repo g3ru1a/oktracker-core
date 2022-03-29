@@ -23,25 +23,51 @@ class ReportController extends Controller
     public function index()
     {
         $this->authorize('view_list', Report::class);
-
-        $reports = Report::whereIn('status', [Report::STATUS_CREATED, Report::STATUS_ASSIGNED]);
-        if(auth()->user()->role_id == Role::DATA_ANALYST){
-            $reports = $reports->where('assignee_id', auth()->user()->id);
-        }
-        $reports = $reports->orderBy("priority", "desc")->paginate(15);
-        $available_reports = Report::where('status', [Report::STATUS_CREATED, Report::STATUS_ASSIGNED])->where('assignee_id', null)->count();
-        return view('pages.reports.index', [
-            'reports' => $reports,
-            'available_reports' => $available_reports
-        ]);
+        return view('pages.reports.index');
     }
 
-    public function take_batch($batch_size)
+    public function take_batch(Request $request)
     {
         $this->authorize('take_batch', Report::class);
 
-        if($batch_size > 20) $batch_size = 20;
-        $reports = Report::where('status', Report::STATUS_CREATED)->where('assignee_id', null)->orderBy("priority", "desc")->take($batch_size);
+        $reports = Report::whereNotIn("status", [Report::STATUS_COMPLETED, Report::STATUS_DROPPED]);
+
+        if(isset($request->USER_REPORT)) $reports->whereNotNull("reporter_id");
+
+        if(!isset($request->ANY)){
+            $reports->where(function($query) use ($request){
+                if(isset($request->SEVERE)) $query->orWhere(function($query) use ($request){
+                    $query->where('priority', '>=', Report::PRIORITY_TRESHOLDS["SEVERE_ISSUES"])
+                    ->where('priority', '<', Report::PRIORITY_TRESHOLDS["COLLECT_DATA"]);
+                });
+
+                if(isset($request->IMPORTANT)) $query->orWhere(function($query) use ($request){
+                    $query->where('priority', '>=', Report::PRIORITY_TRESHOLDS["IMPORTANT_ISSUES"])
+                    ->where('priority', '<', Report::PRIORITY_TRESHOLDS["SEVERE_ISSUES"]);
+                });
+
+                if(isset($request->MINOR)) $query->orWhere(function($query) use ($request){
+                    $query->where('priority', '>=', Report::PRIORITY_TRESHOLDS["MINOR_ISSUES"])
+                    ->where('priority', '<', Report::PRIORITY_TRESHOLDS["IMPORTANT_ISSUES"]);
+                });
+
+                if(isset($request->CLEAN)) $query->orWhere(function($query) use ($request){
+                    $query->where('priority', '>=', Report::PRIORITY_TRESHOLDS["AWAITING_REVIEW"])
+                    ->where('priority', '<', Report::PRIORITY_TRESHOLDS["MINOR_ISSUES"]);
+                });
+            });
+        }else{
+            $reports->where('priority', '<', Report::PRIORITY_TRESHOLDS["COLLECT_DATA"]);
+        }
+
+        if(isset($request->COLLECT)) $reports->orWhere('priority', Report::PRIORITY_TRESHOLDS["COLLECT_DATA"]);
+
+        // $query = str_replace(array('?'), array('\'%s\''), $reports->toSql());
+        // $query = vsprintf($query, $reports->getBindings());
+        // dd($query);
+
+        $reports = $reports->orderBy('priority', 'desc')->take($request->size);
+
         $reports->update(['assignee_id' => Auth::user()->id, 'status' => Report::STATUS_ASSIGNED]);
         return redirect(route('reports.index'));
     }
@@ -60,6 +86,15 @@ class ReportController extends Controller
         $this->authorize('complete', $report);
 
         $report->status = Report::STATUS_COMPLETED;
+        $report->save();
+        return redirect()->back();
+    }
+
+    public function drop(Report $report)
+    {
+        $this->authorize('drop', $report);
+
+        $report->status = Report::STATUS_DROPPED;
         $report->save();
         return redirect()->back();
     }

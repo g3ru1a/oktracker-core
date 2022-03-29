@@ -40,6 +40,11 @@ class ReportPolicy
         return $user->role_id == Role::ADMIN || ($user->role_id == Role::DATA_ANALYST && $user->id == $report->assignee_id);
     }
 
+    public function drop(User $user, Report $report)
+    {
+        return $user->role_id == Role::ADMIN || ($user->role_id == Role::DATA_ANALYST && $user->id == $report->assignee_id);
+    }
+
     public function take_batch(User $user)
     {
         return $user->role_id == Role::DATA_ANALYST && count($user->unfinishedReports) == 0;

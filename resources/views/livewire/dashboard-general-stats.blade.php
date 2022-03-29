@@ -23,7 +23,7 @@
                 </div>
                 <div class="mx-2">
                     <h2 class="font-semibold text-2xl">{{ $newBooksThisMonth }}</h2>
-                    <p class="text-gray-500">New Books {{$prettyDayDiff}}</p>
+                    <p class="text-gray-500">New Books {{ $prettyDayDiff }}</p>
                 </div>
                 <div class="ml-4 flex items-center text-{{ $bookPercDiff < 0 ? 'red' : 'green' }}-600">
                     <p class="text-lg font-semibold">{{ $bookPercDiff }}%</p><svg xmlns="http://www.w3.org/2000/svg"
@@ -47,7 +47,7 @@
                 </div>
                 <div class="mx-2">
                     <h2 class="font-semibold text-2xl">{{ $newSeriesThisMonth }}</h2>
-                    <p class="text-gray-500">New Series {{$prettyDayDiff}}</p>
+                    <p class="text-gray-500">New Series {{ $prettyDayDiff }}</p>
                 </div>
                 <div class="ml-4 flex items-center text-{{ $seriesPercDiff < 0 ? 'red' : 'green' }}-600">
                     <p class="text-lg font-semibold">{{ $seriesPercDiff }}%</p><svg xmlns="http://www.w3.org/2000/svg"
@@ -71,10 +71,11 @@
                 </div>
                 <div class="mx-2">
                     <h2 class="font-semibold text-2xl">{{ $newReportsThisMonth }}</h2>
-                    <p class="text-gray-500">New Reports {{$prettyDayDiff}}</p>
+                    <p class="text-gray-500">New Reports {{ $prettyDayDiff }}</p>
                 </div>
                 <div class="ml-4 flex items-center text-{{ $reportsPercDiff < 0 ? 'red' : 'green' }}-600">
-                    <p class="text-lg font-semibold">{{ $reportsPercDiff }}%</p><svg xmlns="http://www.w3.org/2000/svg"
+                    <p class="text-lg font-semibold">{{ $reportsPercDiff }}%</p><svg
+                        xmlns="http://www.w3.org/2000/svg"
                         class="h-6 w-6 transform {{ $reportsPercDiff < 0 ? 'rotate-180' : 'rotate-0' }}" fill="none"
                         viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
