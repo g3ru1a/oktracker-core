@@ -94,7 +94,13 @@
 
                         <div class="mt-2 flex items-stretch justify-evenly">
                             <livewire:series-select :series_id="$book->series_id" />
-                            <div class="w-1/2 ml-1 h-auto">
+                            
+                        </div>
+                        <div class="mt-2 flex items-stretch justify-evenly">
+                            <div class="w-1/2 pr-1 h-auto">
+                                <livewire:book-type-selector :givenType="$book->book_type_id" />
+                            </div>
+                            <div class="w-1/2 pl-1 h-auto">
                                 <x-jet-label for="binding" value="{{ __('Binding') }}" />
                                 <select name="binding" class=" form-select appearance-none w-full px-3 py-2 text-base font-normal text-gray-700
                                         bg-white bg-clip-padding bg-no-repeat border border-solid border-gray-300

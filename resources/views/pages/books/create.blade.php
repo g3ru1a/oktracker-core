@@ -92,8 +92,14 @@
                             </div>
                         </div>
 
-                        <div class="mt-2 flex">
+                        <div class="mt-2 flex items-stretch justify-evenly">
                             <livewire:series-select />
+                        </div>
+
+                        <div class="mt-2 flex items-stretch justify-evenly">
+                            <div class="w-1/2 pr-1 h-auto">
+                                <livewire:book-type-selector />
+                            </div>
                             <div class="w-1/2 ml-1">
                                 <x-jet-label for="binding" value="{{ __('Binding') }}" />
                                 <select name="binding" class=" form-select appearance-none w-full px-3 py-2 text-base font-normal text-gray-700

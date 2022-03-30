@@ -1,14 +1,14 @@
 <div>
-    <x-jet-label for="kind" value="{{ __('Kind') }}" />
+    <x-jet-label for="type" value="{{ __('Type') }}" />
     <div class="flex items-stretch mt-1">
-        <select name="kind"
+        <select name="book_type_id"
             class="form-select appearance-none block w-full px-3 py-2 text-base font-normal text-gray-700
                                         bg-white bg-clip-padding bg-no-repeat border border-solid border-gray-300
                                         rounded-l-md transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-black focus:outline-none"
-            aria-label="Series Kind">
-            @if ($kinds)
-                @foreach ($kinds as $kind)
-                    <option value="{{ $kind->name }}" @if (isset($givenKind) && $givenKind == $kind->name) selected @endif>{{ $kind->name }}</option>
+            aria-label="Book type">
+            @if ($types)
+                @foreach ($types as $type)
+                    <option value="{{ $type->id }}" @if (isset($givenType) && $givenType == $type->id) selected @endif>{{ $type->name }}</option>
                 @endforeach
             @endif
         </select>
@@ -56,18 +56,18 @@
                 <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                     <div class="sm:flex-col sm:items-start">
                         <div class="w-full flex items-center">
-                            <input wire:model="kindInput" type="text" class="w-full rounded-l-md placeholder:italic"
-                                placeholder="Kind Name..">
-                            <button wire:click="addKind" type="button"
+                            <input wire:model="typeInput" type="text" class="w-full rounded-l-md placeholder:italic"
+                                placeholder="Type Name..">
+                            <button wire:click="addType" type="button"
                                 class="rounded-r-md text-white bg-gray-800 hover:bg-black px-4 py-2">Add</button>
                         </div>
                         <div class="mt-2 flex-col justify-between items-center">
-                            @if ($kinds)
-                                @foreach ($kinds as $kind)
+                            @if ($types)
+                                @foreach ($types as $type)
                                     <div
                                         class="flex py-2 px-4 items-center justify-between w-full border-b border-gray-200">
-                                        <h1>{{ $kind->name }}</h1>
-                                        <button wire:click="deleteKind({{ $kind->id }})" type="button"
+                                        <h1>{{ $type->name }}</h1>
+                                        <button wire:click="deleteType({{ $type->id }})" type="button"
                                             class="text-red-400">Delete</button>
                                     </div>
                                 @endforeach
@@ -86,7 +86,7 @@
     </div>
     <script>
         function toggleModal() {
-            let modal = document.getElementById('add_kind_modal');
+            let modal = document.getElementById('add_type_modal');
             modal.classList.toggle('hidden');
         }
     </script>

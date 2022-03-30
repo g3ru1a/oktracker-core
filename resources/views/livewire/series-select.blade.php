@@ -1,4 +1,4 @@
-<div class="w-1/2 ml-1 relative">
+<div class="w-full ml-1 relative">
     <x-jet-label for="series_id" value="{{ __('Series').($series_id == null ? ' (Missing)' : ' ✔️') }}" />
     <input required wire:model="series_id" name="series_id" type="hidden" />
 

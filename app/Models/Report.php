@@ -41,6 +41,7 @@ class Report extends Model
         "volume_number" => 1,
         "series_id" => 10,
         "binding" => 1,
+        "book_type_id" => 1,
         "new_vendor" => 5,
     ];
 
@@ -78,6 +79,7 @@ class Report extends Model
         if ($book->pages == null) $pp += Report::PRIORITY_POINTS["pages"];
         if ($book->volume_number == null) $pp += Report::PRIORITY_POINTS["volume_number"];
         if ($book->series_id == null) $pp += Report::PRIORITY_POINTS["series_id"];
+        if ($book->book_type_id == null) $pp += Report::PRIORITY_POINTS["book_type_id"];
         return $pp;
     }
 
