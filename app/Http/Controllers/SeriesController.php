@@ -52,19 +52,8 @@ class SeriesController extends Controller
         $series = Series::create($request->except(["authors"]));
         $series->authors = json_encode($authors);
         $series->save();
-        if($request->hasFile('cover')){
-            $originalExtension = $request->file('cover')->getClientOriginalExtension();
-            $img = Image::make($request->file('cover'))->resize(300, null, function ($constraint) {
-                $constraint->aspectRatio();
-            })->encode('jpg', 90);
-
-
-            $filename = 'cover.' . $originalExtension;
-            $path = '/series/' . $series->id . '/' . $filename;
-
-            Storage::disk('public')->put($path, $img);
-
-            $series->cover_url = '/storage' . $path;
+        if ($request->hasFile('cover')) {
+            $series->cover_url = ISBNLookUpController::processCover($request->file('cover'), 'series/'.$series->id);
             $series->save();
         }
         return redirect(route('series.index'));
@@ -114,23 +103,7 @@ class SeriesController extends Controller
         $series->authors = json_encode($authors);
         $series->save();
         if ($request->hasFile('cover')) {
-            $originalExtension = $request->file('cover')->getClientOriginalExtension();
-
-            if (file_exists(public_path() . 'series/' . $series->id . '/cover'. $originalExtension)){
-                unlink(public_path() . 'series/' . $series->id . '/cover' . $originalExtension);
-            }
-
-            $img = Image::make($request->file('cover'))->resize(300, null, function ($constraint) {
-                $constraint->aspectRatio();
-            })->encode('jpg', 90);
-
-
-            $filename = 'cover.' . $originalExtension;
-            $path = '/series/' . $series->id . '/' . $filename;
-
-            Storage::disk('public')->put($path, $img);
-
-            $series->cover_url = '/storage' . $path;
+            $series->cover_url = ISBNLookUpController::processCover($request->file('cover'), 'series/'.$series->id);
             $series->save();
         }
         return redirect(route('series.index'));

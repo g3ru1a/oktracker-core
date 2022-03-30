@@ -123,10 +123,7 @@ class BookVendorController extends Controller
         $bookvendor->public = $request->is_public == 'on';
         $bookvendor->save();
         if ($request->hasFile('logo')) {
-            $originalExtension = $request->file('logo')->getClientOriginalExtension();
-            $filename = 'logo' . $originalExtension;
-            $path = $request->file('logo')->storeAs('public/vendors/' . $bookvendor->id, $filename);
-            $bookvendor->path_to_logo = '/' . str_replace('public', 'storage', $path);
+            $bookvendor->path_to_logo = ISBNLookUpController::processCover($request->file('logo'), 'bookvendor/'.$bookvendor->id);
             $bookvendor->save();
         }
         return redirect(route('bookvendors.index'));
@@ -171,20 +168,10 @@ class BookVendorController extends Controller
         $bookvendor->update($request->all());
         $bookvendor->public = $request->is_public == 'on';
         $bookvendor->save();
-
         if ($request->hasFile('logo')) {
-            $originalExtension = $request->file('logo')->getClientOriginalExtension();
-
-            if (file_exists(public_path() . 'vendors/' . $bookvendor->id . '/logo' . $originalExtension)) {
-                unlink(public_path() . 'vendors/' . $bookvendor->id . '/logo' . $originalExtension);
-            }
-
-            $filename = 'logo' . $originalExtension;
-            $path = $request->file('logo')->storeAs('public/vendors/' . $bookvendor->id, $filename);
-            $bookvendor->path_to_logo = '/' . str_replace('public', 'storage', $path);
+            $bookvendor->path_to_logo = ISBNLookUpController::processCover($request->file('logo'), 'bookvendor/'.$bookvendor->id);
             $bookvendor->save();
         }
-
         return redirect(route('bookvendors.index'));
     }
 

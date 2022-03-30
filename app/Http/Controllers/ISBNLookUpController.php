@@ -207,17 +207,24 @@ class ISBNLookUpController extends Controller
         ];
     }
 
-    private static function processCover($cover_url){
+    public static function processCover($cover_url, $folder = "images_from_api"){
         if($cover_url == null) return '/missing_cover.png';
-        $filename = self::generateRandomString().basename($cover_url);
 
-        $path = "/images_from_api/" . $filename;
+        if(is_string($cover_url)){
+            $filename = self::generateRandomString().basename($cover_url);
+        }else{
+            $filename = self::generateRandomString(20) . ".jpg";
+        }
 
-        $img = Image::make($cover_url)->encode('jpg', 75)->stream('jpg', 90);
+        $path = "$folder/$filename";
 
-        Storage::disk('public')->put($path, $img);
+        $img = Image::make($cover_url)->resize(300, null, function ($constraint) {
+                $constraint->aspectRatio();
+         })->encode('jpg', 90);
 
-        return '/storage'.$path;
+        Storage::disk('s3')->put($path, $img);
+
+        return Storage::disk('s3')->url($path);
     }
 
     private static function RemoveExtrasFromTitle($title){

@@ -80,19 +80,7 @@ class BookController extends Controller
         $book->save();
 
         if ($request->hasFile('cover')) {
-            $originalExtension = $request->file('cover')->getClientOriginalExtension();
-            
-            $img = Image::make($request->file('cover'))->resize(300, null, function ($constraint) {
-                $constraint->aspectRatio();
-            })->encode('jpg', 90);
-
-
-            $filename = 'cover.' . $originalExtension;
-            $path = '/books/' . $book->id . '/' . $filename;
-
-            Storage::disk('public')->put($path, $img);
-
-            $book->cover_url = '/storage' . $path;
+            $book->cover_url = ISBNLookUpController::processCover($request->file('cover'), 'books/'.$book->id);
             $book->save();
         }
         return redirect(route('book.index'));
@@ -145,23 +133,7 @@ class BookController extends Controller
         $book->save();
 
         if ($request->hasFile('cover')) {
-            $originalExtension = $request->file('cover')->getClientOriginalExtension();
-
-            if (file_exists(public_path() . 'books/' . $book->id . '/cover.' . $originalExtension)) {
-                unlink(public_path() . 'books/' . $book->id . '/cover.' . $originalExtension);
-            }
-
-            $img = Image::make($request->file('cover'))->resize(300, null, function ($constraint) {
-                $constraint->aspectRatio();
-            })->encode('jpg', 90);
-
-
-            $filename = 'cover.' . $originalExtension;
-            $path = '/books/' . $book->id . '/'.$filename;
-
-            Storage::disk('public')->put($path, $img);
-
-            $book->cover_url = '/storage' . $path;
+            $book->cover_url = ISBNLookUpController::processCover($request->file('cover'), 'books/'.$book->id);
             $book->save();
         }
         return redirect(route('book.index'));
