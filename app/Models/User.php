@@ -70,7 +70,7 @@ class User extends Authenticatable
 
     public function unfinishedReports()
     {
-        return $this->hasMany(Report::class, 'assignee_id')->where('status', "!=", Report::STATUS_COMPLETED);
+        return $this->hasMany(Report::class, 'assignee_id')->whereNotIn('status', [Report::STATUS_COMPLETED, Report::STATUS_DROPPED]);
     }
 
     public function collections(){
