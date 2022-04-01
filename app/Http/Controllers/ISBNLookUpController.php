@@ -214,7 +214,7 @@ class ISBNLookUpController extends Controller
             $filename = self::generateRandomString().basename($cover_url);
             if(strlen($filename) > 30){
                 $arr = explode(".", $filename);
-                $filename = substr($arr[0], 0, 30).$arr[count($arr)-1];
+                $filename = substr($arr[0], 0, 30).'.jpg';
             }
         }else{
             $filename = self::generateRandomString(20) . ".jpg";
