@@ -220,7 +220,7 @@ class ISBNLookUpController extends Controller
             $filename = self::generateRandomString(20) . ".jpg";
         }
 
-        $filename = preg_replace('/[^A-Za-z]+/', '', $filename);
+        $filename = preg_replace('/[^A-Za-z.]+/', '', $filename);
 
         $path = "$folder/$filename";
 
