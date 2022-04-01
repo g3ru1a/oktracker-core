@@ -212,9 +212,15 @@ class ISBNLookUpController extends Controller
 
         if(is_string($cover_url)){
             $filename = self::generateRandomString().basename($cover_url);
+            if(strlen($filename) > 30){
+                $arr = explode(".", $filename);
+                $filename = substr($arr[0], 0, 30).$arr[count($arr)-1];
+            }
         }else{
             $filename = self::generateRandomString(20) . ".jpg";
         }
+
+        $filename = preg_replace('/[^A-Za-z]+/', '', $filename);
 
         $path = "$folder/$filename";
 
@@ -222,7 +228,7 @@ class ISBNLookUpController extends Controller
                 $constraint->aspectRatio();
          })->encode('jpg', 90);
 
-        $store = Storage::disk('public')->put($path, $img);
+        Storage::disk('public')->put($path, $img);
 
         return Storage::url($path);
     }
