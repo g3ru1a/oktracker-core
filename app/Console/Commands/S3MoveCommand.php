@@ -41,7 +41,7 @@ class S3MoveCommand extends Command
      */
     public function handle()
     {
-        $books = Book::where('cover_url', 'not like', "%amazonaws%")->get();
+        $books = Book::where('cover_url', 'like', "%amazonaws%")->get();
 
         foreach($books as $book){
             $url = (!str_contains($book->cover_url, "http") ? env('APP_URL').$book->cover_url : $book->cover_url);
@@ -51,7 +51,7 @@ class S3MoveCommand extends Command
             $this->info("Moved To: ".$book->cover_url);
         }
 
-        $series = Series::where('cover_url', 'not like', "%amazonaws%")->get();
+        $series = Series::where('cover_url', 'like', "%amazonaws%")->get();
 
         foreach($series as $serie){
             $url = (!str_contains($serie->cover_url, "http") ? env('APP_URL').$serie->cover_url : $serie->cover_url);
@@ -61,7 +61,7 @@ class S3MoveCommand extends Command
             $this->info("Moved To: ".$serie->cover_url);
         }
 
-        $bookvendors = BookVendor::where('path_to_logo', 'not like', "%amazonaws%")->get();
+        $bookvendors = BookVendor::where('path_to_logo', 'like', "%amazonaws%")->get();
 
         foreach($bookvendors as $bv){
             $url = (!str_contains($bv->path_to_logo, "http") ? env('APP_URL').$bv->path_to_logo : $bv->path_to_logo);

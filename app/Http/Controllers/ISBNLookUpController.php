@@ -222,9 +222,9 @@ class ISBNLookUpController extends Controller
                 $constraint->aspectRatio();
          })->encode('jpg', 90);
 
-        Storage::disk('s3')->put($path, $img);
+        $store = Storage::disk('public')->put($path, $img);
 
-        return Storage::disk('s3')->url($path);
+        return Storage::url($path);
     }
 
     private static function RemoveExtrasFromTitle($title){
