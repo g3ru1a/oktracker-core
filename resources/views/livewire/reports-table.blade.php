@@ -84,7 +84,7 @@
                                         @endif
                                         @if ($r->item)
                                             @switch($r->item_type)
-                                                @case('\\App\\Models\\Book')
+                                                @case('App\Models\Book')
                                                     <b>Language:</b> {{ $r->item->language }}<br>
                                                     <b>Authors:</b> {{ $r->item->authors }}<br>
                                                     <b>Publisher:</b> {{ $r->item->publisher }}<br>
@@ -92,7 +92,7 @@
                                                     <b>Pages:</b> {{ $r->item->pages }}
                                                 @break
 
-                                                @case('\\App\\Models\\Series')
+                                                @case('App\Models\Series')
                                                     <b>Authors:</b> {{ $r->item->authors }}<br>
                                                 @break
 
@@ -103,7 +103,7 @@
                                 </td>
                                 <td class="px-6 py-4 whitespace-wrap w-1/5">
                                     @switch($r->item_type)
-                                        @case('\\App\\Models\\Book')
+                                        @case('App\Models\Book')
                                             <div
                                                 class="flex items-center justify-evenly text-center  rounded-md bg-green-100 text-green-800">
                                                 <a href="{{ route('book.edit', ['book' => $r->item_id]) }}" target="_blank"
@@ -120,7 +120,7 @@
                                             </div>
                                         @break
 
-                                        @case('\\App\\Models\\Series')
+                                        @case('App\Models\Series')
                                             <div
                                                 class="flex items-center justify-center text-center   rounded-md bg-purple-100 text-purple-900">
                                                 <a href="{{ route('series.edit', ['series' => $r->item_id]) }}"
@@ -138,7 +138,7 @@
                                             </div>
                                         @break
 
-                                        @case('\\App\\Models\\BookVendor')
+                                        @case('App\Models\BookVendor')
                                             <div
                                                 class="flex items-center justify-evenly text-center rounded-md bg-pink-100 text-pink-900">
                                                 <a href="{{ route('bookvendors.edit', ['bookvendor' => $r->item_id]) }}"
