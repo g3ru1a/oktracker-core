@@ -1,9 +1,0 @@
-[{
-  "relation": ["delegate_permission/common.handle_all_urls"],
-  "target": {
-    "namespace": "android_app",
-    "package_name": "com.oktracker",
-    "sha256_cert_fingerprints":
-    ["9C:C1:25:E0:80:9C:2B:30:A2:2D:AF:EA:27:2D:A2:03:58:9D:16:9C:C6:6D:AC:2F:CB:57:B6:20:0B:C9:6F:95"]
-  }
-}]
