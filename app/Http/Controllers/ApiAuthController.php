@@ -11,6 +11,8 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
 use Mail;
+use Jenssegers\Agent\Agent;
+
 
 class ApiAuthController extends Controller
 {
@@ -45,7 +47,13 @@ class ApiAuthController extends Controller
             $user->email_verified_at = Carbon::now();
             $user->remember_token = null;
             $user->save();
-            return response()->json("Email Verified", 200);
+
+            $agent = new Agent();
+            if($agent->isMobile() || $agent->isTablet()){
+                return redirect(route('open.app.login'));
+            }else{
+                return response("Email Verified", 200);
+            }
         }else return response()->json("Invalid Token", 422);
     }
 

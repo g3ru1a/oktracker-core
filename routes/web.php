@@ -23,6 +23,8 @@ Route::get('/', function () {
     return redirect(route('dashboard'));
 });
 
+Route::get('/app/login', function(){})->name('open.app.login');
+
 Route::get('/policy', function () {
     return view('policy');
 });
