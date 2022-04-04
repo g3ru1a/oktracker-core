@@ -45,7 +45,7 @@ class ApiAuthController extends Controller
     public function verifyEmail(User $user, $token){
         if($user->remember_token == $token){
             $user->email_verified_at = Carbon::now();
-            $user->remember_token = null;
+            // $user->remember_token = null;
             $user->save();
 
             $agent = new Agent();
