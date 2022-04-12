@@ -207,17 +207,17 @@ class ISBNLookUpController extends Controller
         ];
     }
 
-    public static function processCover($cover_url, $folder = "images_from_api"){
+    public static function processCover($cover_url, $folder = "images_from_api", $png = false){
         if($cover_url == null) return '/missing_cover.png';
 
         if(is_string($cover_url)){
             $filename = self::generateRandomString().basename($cover_url);
             if(strlen($filename) > 30){
                 $arr = explode(".", $filename);
-                $filename = substr($arr[0], 0, 30).'.jpg';
+                $filename = substr($arr[0], 0, 30). ($png ? '.png' : '.jpg');
             }
         }else{
-            $filename = self::generateRandomString(20) . ".jpg";
+            $filename = self::generateRandomString(20) .  ($png ? '.png' : '.jpg');
         }
 
         $filename = preg_replace('/[^A-Za-z.]+/', '', $filename);
@@ -226,7 +226,7 @@ class ISBNLookUpController extends Controller
 
         $img = Image::make($cover_url)->resize(300, null, function ($constraint) {
                 $constraint->aspectRatio();
-         })->encode('jpg', 90);
+         })->encode( ($png ? 'png' : 'jpg'), 90);
 
         Storage::disk('public')->put($path, $img);
 

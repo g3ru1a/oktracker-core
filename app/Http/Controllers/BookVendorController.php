@@ -123,7 +123,7 @@ class BookVendorController extends Controller
         $bookvendor->public = $request->is_public == 'on';
         $bookvendor->save();
         if ($request->hasFile('logo')) {
-            $bookvendor->path_to_logo = ISBNLookUpController::processCover($request->file('logo'), 'bookvendor/'.$bookvendor->id);
+            $bookvendor->path_to_logo = ISBNLookUpController::processCover($request->file('logo'), 'bookvendor/'.$bookvendor->id, true);
             $bookvendor->save();
         }
         return redirect(route('bookvendors.index'));
@@ -169,7 +169,7 @@ class BookVendorController extends Controller
         $bookvendor->public = $request->is_public == 'on';
         $bookvendor->save();
         if ($request->hasFile('logo')) {
-            $bookvendor->path_to_logo = ISBNLookUpController::processCover($request->file('logo'), 'bookvendor/'.$bookvendor->id);
+            $bookvendor->path_to_logo = ISBNLookUpController::processCover($request->file('logo'), 'bookvendor/'.$bookvendor->id, true);
             $bookvendor->save();
         }
         return redirect(route('bookvendors.index'));
