@@ -110,7 +110,7 @@ class UpdateUserDataTest extends TestCase
     /**
      * Check if user can change emails
      *
-     * @return void
+     * @return array
      */
     public function test_change_email(): array
     {
@@ -138,6 +138,7 @@ class UpdateUserDataTest extends TestCase
      * Check if user can change emails
      *
      * @depends test_change_email
+     * @param array $data
      * @return void
      */
     public function test_change_email_confirm($data)

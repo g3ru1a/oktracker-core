@@ -2,115 +2,124 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ChangeEmailRequest;
+use App\Http\Requests\ChangePasswordRequest;
+use App\Http\Requests\UpdateUserInfoRequest;
 use App\Http\Resources\UserResource;
-use App\Http\Resources\UserResultResource;
 use App\Mail\EmailChangeVerify;
 use App\Models\User;
+use App\Repositories\UserRepositoryInterface;
 use Auth;
-use Carbon\Carbon;
 use Crypt;
-use Hash;
-use Illuminate\Http\Request;
+use Exception;
 use Mail;
-use Storage;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class UserController extends Controller
 {
-    public function getUserInfo()
+    private UserRepositoryInterface $userRepository; 
+
+    public function __construct(UserRepositoryInterface $userRepository)
     {
-        return UserResource::make(auth()->user());
+        $this->userRepository = $userRepository;
     }
 
-    public function changePassword(Request $request){
-        $fields = $request->validate([
-            'old_password' => 'required|string',
-            'password' => 'required|string|confirmed'
-        ]);
-
-        $user = Auth::user();
-
-        if (!$user || !Hash::check($fields['old_password'], $user->password)) {
-            return response(['message' => 'Bad Credentials.'], 401);
-        }
-
-        $user->password = bcrypt($fields['password']);
-        $user->save();
-
-        $token = $user->createToken(env('APP_KEY'))->plainTextToken;
-        $response = [
-            'user' => $user,
-            'token' => $token
-        ];
-        return response($response, 200);
-    }
-
-    public function changeEmail(Request $request)
+    /**
+     * Find a user and return its resource
+     * 
+     * @param Integer|NULL $user_id 
+     * @return UserResource
+     */
+    public function find($user_id = null): UserResource
     {
-        $fields = $request->validate([
-            'email' => 'required|string|unique:users,email',
-        ]);
-        $user = Auth::user();
-        $encrypted_mail = Crypt::encryptString($fields['email']);
-
-        try {
-            $user->remember_token = bin2hex(random_bytes(20));
-            $user->save();
-
-            Mail::mailer()->to($fields['email'])->send(new EmailChangeVerify($user, $encrypted_mail));
-        } catch (\Throwable $th) {
-            return response()->json("Could not send email", 422);
-        }
-
-        return response()->json(["message"=>"Sent verification email."]);
+        $user = $this->userRepository->find($user_id);
+        return UserResource::make($user);
     }
 
-    public function changeEmailConfirm(User $user, $email_crypted, $token){
+    /**
+     * Change authenticated user's password
+     * 
+     * @param ChangePasswordRequest $request
+     * @return JsonResponse
+     */
+    public function changePassword(ChangePasswordRequest $request): JsonResponse
+    {
         try {
-            if ($user->remember_token == $token) {
-                $user->email_verified_at = Carbon::now();
-                $user->email = Crypt::decryptString($email_crypted);
-                $user->save();
-                return response()->json("Email Changed Successfully!");
-            }else{
-                return response()->json("bad request", 422);
-            }
-        } catch (\Illuminate\Contracts\Encryption\DecryptException $e) {
-            return response()->json("Bad Request", 422);
+            $user = $this->userRepository->updatePassword(Auth::user(), $request->old_password, $request->password);
+        } catch (Exception $e) {
+            return response()->json($e->getMessage(), 401);
         }
-
+        return self::tokenResponse($user);
     }
 
-    //Update image, name and other info
-    public function update(Request $request){
+    /**
+     * Send confirmation email to change authenticated user's email
+     * 
+     * @param ChangeEmailRequest $request
+     * @return JsonResponse
+     */
+    public function changeEmail(ChangeEmailRequest $request): JsonResponse
+    {
+        try {
+            $user = $this->userRepository->updateToken(Auth::user(), $request->email);
 
-        $fields = $request->validate([
-            'name' => 'string',
-            'profile' => 'image'
-        ]);
+            $encrypted_mail = Crypt::encryptString($request->email);
+            Mail::mailer()->to($request->email)->send(new EmailChangeVerify($user, $encrypted_mail));
+        } catch (Exception $e) {
+            return response()->json($e->getMessage(), 422);
+        }
+        return response()->json(["EMAIL_SENT"]);
+    }
 
+    /**
+     * Confirm email change for the specified user.
+     * 
+     * @param User $user
+     * @param string $email_crypted
+     * @param string $token
+     * @return JsonResponse
+     */
+    public function confirmEmail(User $user, $email_crypted, $token): JsonResponse
+    {
+        try {
+            $user = $this->userRepository->confirmEmail($user, $email_crypted, $token);
+        } catch (Exception $e) {
+            return response()->json($e->getMessage(), 422);
+        }
+        return response()->json("Email Confirmed.");
+    }
+
+    /**
+     * Update authenticated user's name and optionally Profile Picture
+     * 
+     * @param UpdateUserInfoRequest $request
+     * 
+     * @return JsonResponse
+     */
+    public function updateInfo(UpdateUserInfoRequest $request): JsonResponse
+    {
         $user = Auth::user();
+        $user = $this->userRepository->updateName($user, $request->name);
         if ($request->hasFile('profile')) {
-            $originalExtension = $request->file('profile')->getClientOriginalExtension();
-
-            if (file_exists(public_path() . 'profile/' . $user->id . '/profile' . $originalExtension)) {
-                unlink(public_path() . 'profile/' . $user->id . '/profile' . $originalExtension);
-            }
-
-            $filename = 'profile.' . $originalExtension;
-            // $path = $request->file('profile')->storeAs('public/profile/' . $user->id, $filename);
-            $path = Storage::putFileAs('profile/' . $user->id, $request->file('profile'), $filename);
-            $user->profile_photo_path = '/'.$path;
-            $user->save();
+            $path = ImageUploadController::uploadUserProfilePicture($user, $request->file('profile'));
+            $user = $this->userRepository->updateProfilePicture($user, $path);
         }
-        if(isset($fields['name'])){
-            $user->name = $fields['name'];
-            $user->save();
-        }
+        return self::tokenResponse($user);
+    }
+
+    /**
+     * Generate a new auth token and format the JsonResponse
+     * 
+     * @param User $user
+     * @return JsonResponse
+     */
+    private function tokenResponse($user): JsonResponse
+    {
         $token = $user->createToken(env('APP_KEY'))->plainTextToken;
         $response = [
             'user' => $user,
             'token' => $token
         ];
-        return response($response, 200);
+        return response()->json($response);
     }
 }
