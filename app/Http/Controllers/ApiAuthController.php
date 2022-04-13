@@ -111,7 +111,7 @@ class ApiAuthController extends Controller
             'user' => $user,
             'token' => $token
         ];
-        return response($response, 201);
+        return response($response, 200);
     }
 
     public function logout(Request $request){

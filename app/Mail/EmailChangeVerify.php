@@ -12,8 +12,8 @@ class EmailChangeVerify extends Mailable
 {
     use Queueable, SerializesModels;
 
-    private User $user;
-    private $encrypted_email;
+    public User $user;
+    public $encrypted_email;
 
     /**
      * Create a new message instance.

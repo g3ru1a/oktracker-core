@@ -47,7 +47,7 @@ Route::get('/book/{book}', [BookController::class, 'find']);
 
 Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'user'], function () {
     Route::get('/', [UserController::class, 'getUserInfo']);
-    Route::get('/search/{query}/{page?}/{count?}', [UserController::class, 'searchUsers']);
+    Route::get('/search/{query}/{page?}/{count?}', [FollowController::class, 'searchUsers']);
 });
 
 Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'report'], function () {

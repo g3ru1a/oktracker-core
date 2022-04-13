@@ -180,6 +180,7 @@ return [
         App\Providers\JetstreamServiceProvider::class,
         Jenssegers\Agent\AgentServiceProvider::class,
 
+        App\Providers\RepositoryServiceProvider::class,
     ],
 
     /*

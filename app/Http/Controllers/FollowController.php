@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\UserResource;
+use App\Http\Resources\UserResultResource;
 use App\Models\Follower;
 use App\Models\User;
 use Auth;
@@ -38,5 +39,26 @@ class FollowController extends Controller
 
         $f = $user->following;
         return UserResource::collection($f);
+    }
+
+    public function searchUsers($query, $page = 1, $count = 30)
+    {
+        $users = User::where("name", "LIKE", "%" . $query . "%")
+            ->skip($count * ($page - 1))->take($count)->get();
+
+        $max_pages = User::where("name", "LIKE", "%" . $query . "%")->count() / $count;
+        $max_pages = ceil($max_pages);
+
+        $pagination_result = [
+            "max_pages" => $max_pages,
+            "prev_page" => ($page > 1) ? $page - 1 : null,
+            "next_page" => ($page + 1 <= $max_pages) ? $page + 1 : null,
+        ];
+        return response()->json([
+            "data" => [
+                "users" => UserResultResource::collection($users),
+                "pagination" => $pagination_result
+            ]
+        ]);
     }
 }
