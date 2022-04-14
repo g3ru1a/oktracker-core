@@ -49,12 +49,12 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
      * @param User $user
      * @param string $old_password
      * @param string $new_password
-     * @return User
+     * @return User|null
      */
-    public function updatePassword($user, $old_password, $new_password): User
+    public function updatePassword($user, $old_password, $new_password): ?User
     {
         if (!$user || !Hash::check($old_password, $user->password)) {
-            throw new Exception("Password Does Not Match");
+            return null;
         }
         $user->password = bcrypt($new_password);
         $user->save();
@@ -78,17 +78,15 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
      * @param string $token
      * @return User
      */
-    public function confirmEmail($user, $crypted_email, $token): User
+    public function confirmEmail($user, $crypted_email, $token): bool
     {
         if ($user->remember_token == $token) {
             $user->email_verified_at = Carbon::now();
             $user->email = Crypt::decryptString($crypted_email);
             $user->remember_token = null;
             $user->save();
-        }else{
-            throw new Exception("Token's do not match.");
-        }
-        return $user;
+            return true;
+        }else return false;
     }
 
     /**

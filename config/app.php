@@ -181,6 +181,7 @@ return [
         Jenssegers\Agent\AgentServiceProvider::class,
 
         App\Providers\RepositoryServiceProvider::class,
+        App\Providers\MailServiceProvider::class,
     ],
 
     /*

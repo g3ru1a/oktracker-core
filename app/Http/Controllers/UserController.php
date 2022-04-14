@@ -6,22 +6,22 @@ use App\Http\Requests\ChangeEmailRequest;
 use App\Http\Requests\ChangePasswordRequest;
 use App\Http\Requests\UpdateUserInfoRequest;
 use App\Http\Resources\UserResource;
-use App\Mail\EmailChangeVerify;
+use App\Mail\AuthMailInterface;
 use App\Models\User;
 use App\Repositories\UserRepositoryInterface;
 use Auth;
-use Crypt;
 use Exception;
-use Mail;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 class UserController extends Controller
 {
-    private UserRepositoryInterface $userRepository; 
+    private UserRepositoryInterface $userRepository;
+    private AuthMailInterface $authMail; 
 
-    public function __construct(UserRepositoryInterface $userRepository)
+    public function __construct(UserRepositoryInterface $userRepository, AuthMailInterface $authMail)
     {
         $this->userRepository = $userRepository;
+        $this->authMail = $authMail;
     }
 
     /**
@@ -44,11 +44,8 @@ class UserController extends Controller
      */
     public function changePassword(ChangePasswordRequest $request): JsonResponse
     {
-        try {
-            $user = $this->userRepository->updatePassword(Auth::user(), $request->old_password, $request->password);
-        } catch (Exception $e) {
-            return response()->json($e->getMessage(), 401);
-        }
+        $user = $this->userRepository->updatePassword(Auth::user(), $request->old_password, $request->password);
+        if($user == null) return response()->json([], 401);
         return self::tokenResponse($user);
     }
 
@@ -60,15 +57,10 @@ class UserController extends Controller
      */
     public function changeEmail(ChangeEmailRequest $request): JsonResponse
     {
-        try {
-            $user = $this->userRepository->updateToken(Auth::user(), $request->email);
-
-            $encrypted_mail = Crypt::encryptString($request->email);
-            Mail::mailer()->to($request->email)->send(new EmailChangeVerify($user, $encrypted_mail));
-        } catch (Exception $e) {
-            return response()->json($e->getMessage(), 422);
-        }
-        return response()->json(["EMAIL_SENT"]);
+        $user = $this->userRepository->updateToken(Auth::user(), $request->email);
+        $sent = $this->authMail->changeEmailConfirmation($request->email, $user);
+        if($sent) return response()->json(["EMAIL_SENT"]);
+        else return response()->json([], 422);
     }
 
     /**
@@ -81,11 +73,8 @@ class UserController extends Controller
      */
     public function confirmEmail(User $user, $email_crypted, $token): JsonResponse
     {
-        try {
-            $user = $this->userRepository->confirmEmail($user, $email_crypted, $token);
-        } catch (Exception $e) {
-            return response()->json($e->getMessage(), 422);
-        }
+        $confirmed = $this->userRepository->confirmEmail($user, $email_crypted, $token);
+        if(!$confirmed) return response()->json([], 422);
         return response()->json("Email Confirmed.");
     }
 
