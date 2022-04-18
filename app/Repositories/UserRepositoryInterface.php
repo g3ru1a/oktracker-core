@@ -8,13 +8,19 @@ interface UserRepositoryInterface
 {
    public function all(): Collection;
    public function find($user_id): User;
+   
+   /**
+    * @return User|null
+    */
+   public function findByEmail($email): User;
+   public function create(array $attributes): User;
 
-   public function updatePassword($user, $old_password, $new_password): ?User;
+   public function updatePassword($user, $new_password): ?User;
    
    public function updateName($user, $name): User;
    public function updateProfilePicture($user, $image_path): User;
 
-   public function updateToken($user): User;
+   public function updateToken($user, $token = null): User;
    public function confirmEmail($user, $crypted_email, $token): bool;
 
    public function updatedInfoResponse($user): array;

@@ -2,44 +2,67 @@
 
 namespace App\Http\Controllers;
 
-use App\Mail\ConfirmEmail;
-use App\Mail\PasswordReset;
-use App\Mail\PasswordResetNotif;
+use App\Http\Requests\ApiForgotPasswordRequest;
+use App\Http\Requests\ApiLoginRequest;
+use App\Http\Requests\ApiRegisterRequest;
+use App\Http\Requests\ApiResetPasswordRequest;
+use App\Mail\AuthMailInterface;
 use App\Models\User;
+use App\Repositories\UserRepositoryInterface;
+use Auth;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
-use Mail;
-use Jenssegers\Agent\Agent;
-
 
 class ApiAuthController extends Controller
 {
+    private UserRepositoryInterface $userRepository;
+    private AuthMailInterface $authMail;
 
-    public function register(Request $request){
-        $fields = $request->validate([
-            'name' => 'required|string',
-            'email' => 'required|string|unique:users,email',
-            'password' => 'required|string|confirmed'
-        ]);
+    public function __construct(UserRepositoryInterface $userRepository, AuthMailInterface $authMail)
+    {
+        $this->userRepository = $userRepository;
+        $this->authMail = $authMail;
+    }
 
-        $email_token = bin2hex(random_bytes(20));
-        
-        $user = User::create([
-            'name' => $fields['name'],
-            'email' => $fields['email'],
-            'password' => bcrypt($fields['password']),
-            'remember_token' => $email_token,
-        ]);
-
-        $response = [
-            'user' => $user,
+    public function register(ApiRegisterRequest $request){        
+        $data = [
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => bcrypt($request->password),
+            'remember_token' => bin2hex(random_bytes(20))
         ];
 
-        Mail::mailer()->to($user->email)->send(new ConfirmEmail($user));
+        $user = $this->userRepository->create($data);
+        $sent = $this->authMail->registrationEmailConfirmation($user);
+        if(!$sent) return response()->json([], 500);
+        return response()->json(['user' => $user], 201);
+    }
 
-        return response($response, 201);
+    public function login(ApiLoginRequest $request)
+    {
+        $user = $this->userRepository->findByEmail($request->email);
+
+        if (!$user || !Hash::check($request->password, $user->password)) {
+            return response()->json(['message' => 'Bad Credentials.'], 401);
+        }
+
+        if ($user->email_verified_at == null) {
+            return response()->json(["errors" => ["email" => ["Email hasn't been verified."]]], 422);
+        }
+
+        $token = $user->createToken(env('APP_KEY'))->plainTextToken;
+        $response = [
+            'user' => $user,
+            'token' => $token
+        ];
+        return response()->json($response, 200);
+    }
+
+    public function logout(Request $request)
+    {
+        Auth::user()->tokens()->delete();
+        return response(['message' => 'Logged out'], 200);
     }
 
     public function verifyEmail(User $user, $token){
@@ -51,71 +74,27 @@ class ApiAuthController extends Controller
         }else return response()->json("Invalid Token", 422);
     }
 
-    public function resetPasswordRequest(Request $request){
-        $fields = $request->validate([
-            'email' => 'required|string',
-        ]);
-        $user = User::where("email", $fields['email'])->first();
-        if($user){
-            $email_token = str_pad(mt_rand(0, 999999), 6, '0', STR_PAD_LEFT);
-            $user->remember_token = $email_token;
-            $user->save();
-            Mail::mailer()->to($user->email)->send(new PasswordReset($user));
-            return response()->json(["message" => "reset password email sent"], 200);
-        }else{
-            return response()->json("Invalid Request", 422);
-        }
+    public function forgotPassword(ApiForgotPasswordRequest $request){
+        $user = $this->userRepository->findByEmail($request->email);
+        if($user == null) return response()->json("Invalid Request", 422);
+
+        $user = $this->userRepository->updateToken($user, str_pad(mt_rand(0, 999999), 6, '0', STR_PAD_LEFT));
+        $sent = $this->authMail->forgotPassword($user);
+        
+        if (!$sent) return response()->json([], 500);
+        return response()->json(["message" => "EMAIL_SENT"], 200);
     }
 
-    public function resetPassword(Request $request)
+    public function resetPassword(ApiResetPasswordRequest $request)
     {
-        $fields = $request->validate([
-            'email' => 'required|string',
-            'token' => 'required|string',
-            'password' => 'required|string|confirmed'
-        ]);
-        $user = User::where("email", $fields['email'])->first();
-        if ($user) {
-            if($user->remember_token == $fields['token']){
-                $user->password = bcrypt($fields['password']);
-                $user->remember_token = null;
-                $user->save();
-                Mail::mailer()->to($user->email)->send(new PasswordResetNotif($user));
-                return response()->json(["message" => "password reset successfully"], 200);
-            }
-            return response()->json("Token doesn't match", 422);
-        } else {
-            return response()->json("Invalid Request", 422);
-        }
-    }
+        $user = $this->userRepository->findByEmail($request->email);
+        if ($user == null) return response()->json(["message" => "Could not find user with given email"], 404);
+        if ($user->remember_token != $request->token) return response()->json(["message" => "Token doesn't match"], 422);
 
-    public function login(Request $request)
-    {
-        $fields = $request->validate([
-            'email' => 'required|string',
-            'password' => 'required|string'
-        ]);
+        $user = $this->userRepository->updatePassword($user, $request->password);
+        $sent = $this->authMail->passwordChangedNotif($user);
 
-        $user = User::where('email', $fields['email'])->first();
-
-        if(!$user || !Hash::check($fields['password'], $user->password)){
-            return response(['message' => 'Bad Credentials.'], 401);
-        }
-
-        if($user->email_verified_at == null){
-            return response(["errors" => ["email" => ["Email hasn't been verified."]]], 422);
-        }
-
-        $token = $user->createToken(env('APP_KEY'))->plainTextToken;
-        $response = [
-            'user' => $user,
-            'token' => $token
-        ];
-        return response($response, 200);
-    }
-
-    public function logout(Request $request){
-        auth()->user()->tokens()->delete();
-        return response(['message' => 'Logged out'], 200);
+        if(!$sent) return response()->json([], 500);
+        return response()->json(["message" => "Password Reset Successfully"], 200);
     }
 }

@@ -11,6 +11,7 @@ use App\Models\User;
 use App\Repositories\UserRepositoryInterface;
 use Auth;
 use Exception;
+use Hash;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 class UserController extends Controller
@@ -44,8 +45,11 @@ class UserController extends Controller
      */
     public function changePassword(ChangePasswordRequest $request): JsonResponse
     {
-        $user = $this->userRepository->updatePassword(Auth::user(), $request->old_password, $request->password);
-        if($user == null) return response()->json([], 401);
+        $user = Auth::user();
+        if (!$user || !Hash::check($request->old_password, $user->password)) {
+            return response()->json([], 401);
+        }
+        $user = $this->userRepository->updatePassword($user, $request->password);
         return self::tokenResponse($user);
     }
 
@@ -57,7 +61,7 @@ class UserController extends Controller
      */
     public function changeEmail(ChangeEmailRequest $request): JsonResponse
     {
-        $user = $this->userRepository->updateToken(Auth::user(), $request->email);
+        $user = $this->userRepository->updateToken(Auth::user(), bin2hex(random_bytes(20)));
         $sent = $this->authMail->changeEmailConfirmation($request->email, $user);
         if($sent) return response()->json(["EMAIL_SENT"]);
         else return response()->json([], 422);

@@ -3,6 +3,7 @@
 namespace App\Mail;
 
 use App\Models\User;
+use Crypt;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
@@ -22,6 +23,7 @@ class ConfirmEmail extends Mailable
     public function __construct(User $user)
     {
         $this->user = $user;
+        $this->encrypted_email = Crypt::encryptString($user->email);
     }
 
     /**
@@ -32,7 +34,8 @@ class ConfirmEmail extends Mailable
     public function build()
     {
         return $this->view('mail.confirm-email', [
-            'user' => $this->user
+            'user' => $this->user,
+            'encrypted_email' => $this->encrypted_email
         ]);
     }
 }

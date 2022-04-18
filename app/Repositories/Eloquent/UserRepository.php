@@ -46,16 +46,32 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
     }
 
     /**
+     * @param string $email
+     * @return User|null
+     */
+    public function findByEmail($email): User
+    {
+        $user = User::where('email', $email)->first();
+        return $user;
+    }
+
+    /**
+     * @param array $attributes
+     * @return User
+     */
+    public function create(array $attributes): User
+    {
+        $user = User::create($attributes);
+        return $user;
+    }
+
+    /**
      * @param User $user
-     * @param string $old_password
      * @param string $new_password
      * @return User|null
      */
-    public function updatePassword($user, $old_password, $new_password): ?User
+    public function updatePassword($user, $new_password): ?User
     {
-        if (!$user || !Hash::check($old_password, $user->password)) {
-            return null;
-        }
         $user->password = bcrypt($new_password);
         $user->save();
         return $user;
@@ -65,9 +81,9 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
      * @param User $user
      * @return User
      */
-    public function updateToken($user): User
+    public function updateToken($user, $token = null): User
     {
-        $user->remember_token = bin2hex(random_bytes(20));
+        $user->remember_token = $token;
         $user->save();
         return $user;
     }

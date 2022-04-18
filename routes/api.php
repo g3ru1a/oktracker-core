@@ -23,20 +23,20 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::group(['prefix' => 'v'.env('APP_VERSION', 69)], function(){
-    Route::group(['prefix' => 'auth'], function () {
-        Route::post('/register', [ApiAuthController::class, 'register']);
-        Route::post('/login', [ApiAuthController::class, 'login']);
+Route::group(['as'=> 'v' . env('APP_VERSION', 69).'.', 'prefix' => 'v'.env('APP_VERSION', 69)], function(){
+    Route::group(['as' => 'auth.', 'prefix' => 'auth'], function () {
+        Route::post('/register', [ApiAuthController::class, 'register'])->name('register');
+        Route::post('/login', [ApiAuthController::class, 'login'])->name('login');
         Route::get('/verify/{user}/{token}', [ApiAuthController::class, 'verifyEmail']);
-        Route::post('/reset/request', [ApiAuthController::class, 'resetPasswordRequest']);
-        Route::post('/reset-password', [ApiAuthController::class, 'resetPassword']);
+        Route::post('/reset/request', [ApiAuthController::class, 'forgotPassword'])->name('forgot-password');
+        Route::post('/reset-password', [ApiAuthController::class, 'resetPassword'])->name('reset-password');
 
         Route::get('/email-change/{user}/{email_crypted}/{token}', [UserController::class, 'confirmEmail']);
         Route::group(['middleware' => 'auth:sanctum'], function () {
             Route::post('/email-change', [UserController::class, 'changeEmail']);
             Route::post('/change-password', [UserController::class, 'changePassword']);
             Route::post('/change-info', [UserController::class, 'updateInfo']);
-            Route::post('/logout', [ApiAuthController::class, 'logout']);
+            Route::post('/logout', [ApiAuthController::class, 'logout'])->name('logout');
         });
     });
 
@@ -99,30 +99,30 @@ Route::group(['prefix' => 'v'.env('APP_VERSION', 69)], function(){
 });
 
 /* API V2 */
-Route::group(['prefix' => 'v2'], function () {
+Route::group(['prefix' => 'v2', 'as' => 'v2.'], function () {
 
-    Route::post('/book/bulk', [BookController::class, 'findBulk'])->middleware(["auth:sanctum"]);
-    Route::get('/book/{book}', [BookController::class, 'find']);
-    Route::get('/isbn/{isbn}', [ISBNLookUpController::class, 'lookup']);
+    Route::post('/book/bulk', [BookController::class, 'findBulk'])->middleware(["auth:sanctum"])->name('book-bulk');
+    Route::get('/book/{book}', [BookController::class, 'find'])->name('book');
+    Route::get('/isbn/{isbn}', [ISBNLookUpController::class, 'lookup'])->name('isbn');
 
-    Route::group(['prefix' => 'auth'], function () {
-        Route::post('/login', [ApiAuthController::class, 'login']);
-        Route::post('/register', [ApiAuthController::class, 'register']);
-        Route::post('/password/request', [ApiAuthController::class, 'resetPasswordRequest']);
-        Route::post('/password/reset', [ApiAuthController::class, 'resetPassword']);
-        Route::get('/verify/{user}/{email_crypted}/{token}', [ApiAuthController::class, 'verifyEmail']); //110 included here
+    Route::group(['prefix' => 'auth', 'as' => 'auth.'], function () {
+        Route::post('/login', [ApiAuthController::class, 'login'])->name('login');
+        Route::post('/register', [ApiAuthController::class, 'register'])->name('register');
+        Route::post('/password/forgot', [ApiAuthController::class, 'forgotPassword'])->name('forgot-password');
+        Route::post('/password/reset', [ApiAuthController::class, 'resetPassword'])->name('reset-password');
+        Route::get('/verify/{user}/{email_crypted}/{token}', [ApiAuthController::class, 'verifyEmail'])->name('verify-email'); //110 included here
 
         // Route::get('/email-change/{user}/{email_crypted}/{token}', [UserController::class, 'changeEmailConfirm']);
     });
 
-    Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'users'], function () {
-        Route::get('/{user_id?}', [UserController::class, 'getUserInfo']);
-        Route::get('/{query}/{page?}/{count?}', [FollowController::class, 'searchUsers']);
+    Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'users', 'as' => 'users.'], function () {
+        Route::get('/{user_id?}', [UserController::class, 'getUserInfo'])->name('info');
+        Route::get('/{query}/{page?}/{count?}', [FollowController::class, 'searchUsers'])->name('search');
 
-        Route::post('/email', [UserController::class, 'changeEmail']);
-        Route::post('/password', [UserController::class, 'changePassword']);
-        Route::post('/info', [UserController::class, 'update']);
-        Route::post('/logout', [ApiAuthController::class, 'logout']);
+        Route::post('/email', [UserController::class, 'changeEmail'])->name('change-email');
+        Route::post('/password', [UserController::class, 'changePassword'])->name('change-password');
+        Route::post('/info', [UserController::class, 'update'])->name('change-info');
+        Route::post('/logout', [ApiAuthController::class, 'logout'])->name('logout');
     });
 
     // Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'report'], function () {
