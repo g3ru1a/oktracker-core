@@ -1,7 +1,9 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api\V2;
 
+use App\Http\Controllers\Controller;
+use App\Http\Controllers\ImageUploadController;
 use App\Http\Requests\ChangeEmailRequest;
 use App\Http\Requests\ChangePasswordRequest;
 use App\Http\Requests\UpdateUserInfoRequest;
@@ -10,7 +12,6 @@ use App\Mail\AuthMailInterface;
 use App\Models\User;
 use App\Repositories\UserRepositoryInterface;
 use Auth;
-use Exception;
 use Hash;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
@@ -89,7 +90,7 @@ class UserController extends Controller
      * 
      * @return JsonResponse
      */
-    public function updateInfo(UpdateUserInfoRequest $request): JsonResponse
+    public function changeInfo(UpdateUserInfoRequest $request): JsonResponse
     {
         $user = Auth::user();
         $user = $this->userRepository->updateName($user, $request->name);

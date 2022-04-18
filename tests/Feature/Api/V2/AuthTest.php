@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature;
+namespace Tests\Feature\Api\V2;
 
 use App\Mail\ConfirmEmail;
 use App\Mail\PasswordReset;
@@ -10,7 +10,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Mail;
 use Tests\TestCase;
 
-class ApiAuthTest extends TestCase
+class AuthTest extends TestCase
 {
     use RefreshDatabase;
 
@@ -22,11 +22,11 @@ class ApiAuthTest extends TestCase
     {
         parent::setUp();
         $this->user = User::factory()->create();
-        $ver = 'v'. env('APP_VERSION', 69) . '.';
+        $ver = 'v2.';
         $this->routes = [
             'register' => route($ver.'auth.register'),
             'login' => route($ver.'auth.login'),
-            'logout' => route($ver.'auth.logout'),
+            'logout' => route($ver.'users.logout'),
             'forgot_password' => route($ver . 'auth.forgot-password'),
             'reset_password' => route($ver . 'auth.reset-password'),
         ];

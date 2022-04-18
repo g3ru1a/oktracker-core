@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api\V2;
 
+use App\Http\Controllers\Controller;
 use App\Http\Requests\ApiForgotPasswordRequest;
 use App\Http\Requests\ApiLoginRequest;
 use App\Http\Requests\ApiRegisterRequest;
@@ -14,7 +15,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
-class ApiAuthController extends Controller
+class AuthController extends Controller
 {
     private UserRepositoryInterface $userRepository;
     private AuthMailInterface $authMail;
