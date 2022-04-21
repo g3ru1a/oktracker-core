@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Auth;
 
 class CollectionRequest extends FormRequest
 {
@@ -13,7 +14,7 @@ class CollectionRequest extends FormRequest
      */
     public function authorize()
     {
-        return true;
+        return Auth::user() != null;
     }
 
     /**

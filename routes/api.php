@@ -2,7 +2,6 @@
 
 use App\Http\Controllers\BookController;
 use App\Http\Controllers\BookVendorController;
-use App\Http\Controllers\CollectionController;
 use App\Http\Controllers\FollowController;
 use App\Http\Controllers\ISBNLookUpController;
 use App\Http\Controllers\ItemController;
@@ -13,9 +12,11 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Api\V1\UserController as UserControllerV1;
 use App\Http\Controllers\Api\V1\ApiAuthController as AuthControllerV1;
+use App\Http\Controllers\Api\V1\CollectionController as CollectionControllerV1;
 
 use App\Http\Controllers\Api\V2\UserController as UserControllerV2;
 use App\Http\Controllers\Api\V2\AuthController as AuthControllerV2;
+use App\Http\Controllers\Api\V2\CollectionController as CollectionControllerV2;
 
 /*
 |--------------------------------------------------------------------------
@@ -86,13 +87,14 @@ Route::group(['prefix' => 'v1', 'as' => 'v1.'], function () {
         Route::post('/suggest', [BookVendorController::class, 'suggest']);
     });
 
-    Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'collection'], function () {
-        Route::get('/list', [CollectionController::class, 'list']);
-        Route::get('/find/{collection}', [CollectionController::class, 'find']);
-        Route::get('/items/{collection}/{page?}/{count?}', [CollectionController::class, 'items']);
-        Route::post('/add', [CollectionController::class, 'store']);
-        Route::post('/update/{collection}', [CollectionController::class, 'update']);
-        Route::post('/destroy/{collection}', [CollectionController::class, 'destroy']);
+    Route::group(['middleware' => 'auth:sanctum', 'prefix' =>'collection', 'as' => 'collections.'], function () {
+        Route::get('/list', [CollectionControllerV1::class, 'list'])->name('list');
+        Route::get('/items/{collection}/{page?}/{count?}', [CollectionControllerV1::class, 'items'])->name('items');
+        
+        Route::get('/find/{collection}', [CollectionControllerV1::class, 'find'])->name('find');
+        Route::post('/add', [CollectionControllerV1::class, 'store'])->name('store');
+        Route::post('/update/{collection}', [CollectionControllerV1::class, 'update'])->name('update');
+        Route::post('/destroy/{collection}', [CollectionControllerV1::class, 'destroy'])->name('destroy');
     });
 
     Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'item'], function () {
@@ -160,14 +162,15 @@ Route::group(['prefix' => 'v2', 'as' => 'v2.'], function () {
     //     Route::post('/suggest', [BookVendorController::class, 'suggest']);
     // });
 
-    // Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'collection'], function () {
-    //     Route::get('/list', [CollectionController::class, 'list']);
-    //     Route::get('/find/{collection}', [CollectionController::class, 'find']);
-    //     Route::get('/items/{collection}/{page?}/{count?}', [CollectionController::class, 'items']);
-    //     Route::post('/add', [CollectionController::class, 'store']);
-    //     Route::post('/update/{collection}', [CollectionController::class, 'update']);
-    //     Route::post('/destroy/{collection}', [CollectionController::class, 'destroy']);
-    // });
+    Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'collections', 'as' => 'collections.'], function () {
+        Route::get('/', [CollectionControllerV2::class, 'all'])->name('all');
+        // TODO: Move this -> Route::get('/{collection}/items/{page?}/{count?}', [CollectionControllerV2::class, 'items'])->name('items');
+
+        Route::post('/', [CollectionControllerV2::class, 'create'])->name('create');
+        Route::get('/{collection}', [CollectionControllerV2::class, 'show'])->name('show');
+        Route::put('/{collection}', [CollectionControllerV2::class, 'update'])->name('update');
+        Route::delete('/{collection}', [CollectionControllerV2::class, 'destroy'])->name('destroy');
+    });
 
     // Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'item'], function () {
     //     Route::get('/find/{item}', [ItemController::class, 'find']);

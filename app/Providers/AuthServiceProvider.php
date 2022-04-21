@@ -2,8 +2,10 @@
 
 namespace App\Providers;
 
+use App\Models\Collection;
 use App\Models\Role;
 use App\Models\User;
+use App\Policies\CollectionPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Gate;
 
@@ -16,6 +18,7 @@ class AuthServiceProvider extends ServiceProvider
      */
     protected $policies = [
         // 'App\Models\Model' => 'App\Policies\ModelPolicy',
+        Collection::class => CollectionPolicy::class,
     ];
 
     /**

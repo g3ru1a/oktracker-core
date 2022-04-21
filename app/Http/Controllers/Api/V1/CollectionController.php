@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api\V1;
 
+use App\Http\Controllers\Controller;
 use App\Http\Requests\CollectionRequest;
 use App\Http\Resources\CollectionResource;
 use App\Http\Resources\ItemResourceShort;
@@ -18,7 +19,6 @@ class CollectionController extends Controller
     {
         return CollectionResource::collection(auth()->user()->collections);
     }
-
 
     public function items(Collection $collection, $page = 1, $count = 500){
         if ($collection->user->id == auth()->user()->id) {
@@ -83,7 +83,7 @@ class CollectionController extends Controller
      */
     public function update(CollectionRequest $request, Collection $collection)
     {
-        if ($collection->user->id == auth()->user()->id) {
+        if ($collection->user->id == Auth::user()->id) {
             $collection->update($request->all());
             $collection->refresh();
             return CollectionResource::make($collection);
@@ -98,7 +98,7 @@ class CollectionController extends Controller
      */
     public function destroy(Collection $collection)
     {
-        if ($collection->user->id == auth()->user()->id) {
+        if ($collection->user->id == Auth::user()->id) {
             $collection->delete();
             return CollectionResource::make($collection);
         } else return response()->json(['message' => 'Cannot access this resource.'], 401);
