@@ -2,9 +2,11 @@
 
 namespace App\Policies;
 
+use App\Models\BookVendor;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
+use Illuminate\Auth\Access\Response;
 
 class BookVendorPolicy
 {
@@ -39,5 +41,21 @@ class BookVendorPolicy
     public function destroy(User $user)
     {
         return in_array($user->role_id, [Role::ADMIN, Role::DATA_ANALYST]);
+    }
+
+    public function api_update(User $user, BookVendor $vendor)
+    {
+        if ($vendor->user_id == null || $vendor->user_id != $user->id) {
+            return Response::deny("You do not have access to this vendor.");
+        }
+        return Response::allow();
+    }
+
+    public function api_destroy(User $user, BookVendor $vendor)
+    {
+        if ($vendor->user_id == null || $vendor->user_id != $user->id) {
+            return Response::deny("You do not have access to this vendor.");
+        }
+        return Response::allow();
     }
 }

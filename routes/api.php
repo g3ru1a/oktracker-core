@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\BookController;
 use App\Http\Controllers\BookVendorController;
 use App\Http\Controllers\FollowController;
 use App\Http\Controllers\ISBNLookUpController;
@@ -13,10 +12,14 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\V1\UserController as UserControllerV1;
 use App\Http\Controllers\Api\V1\ApiAuthController as AuthControllerV1;
 use App\Http\Controllers\Api\V1\CollectionController as CollectionControllerV1;
+use App\Http\Controllers\Api\V1\BookController as BookControllerV1;
+use App\Http\Controllers\Api\V1\VendorController as VendorControllerV1;
 
 use App\Http\Controllers\Api\V2\UserController as UserControllerV2;
 use App\Http\Controllers\Api\V2\AuthController as AuthControllerV2;
 use App\Http\Controllers\Api\V2\CollectionController as CollectionControllerV2;
+use App\Http\Controllers\Api\V2\BookController as BookControllerV2;
+use App\Http\Controllers\Api\V2\VendorController as VendorControllerV2;
 
 /*
 |--------------------------------------------------------------------------
@@ -48,9 +51,8 @@ Route::group(['prefix' => 'v1', 'as' => 'v1.'], function () {
 
     Route::get('/isbn/{isbn}', [ISBNLookUpController::class, 'lookup']);
 
-    Route::post('/book/bulk', [BookController::class, 'findBulk'])->middleware(["auth:sanctum"]);
-    Route::get('/book/{book}', [BookController::class, 'find']);
-
+    Route::post('/book/bulk', [BookControllerV1::class, 'findBulk'])->middleware(["auth:sanctum"]);
+    Route::get('/book/{book}', [BookControllerV1::class, 'find']);
 
     Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'user'], function () {
         Route::get('/{user_id?}', [UserControllerV1::class, 'find']);
@@ -77,14 +79,14 @@ Route::group(['prefix' => 'v1', 'as' => 'v1.'], function () {
         Route::post('/unfollow/{user}', [FollowController::class, 'unfollow']);
     });
 
-    Route::get('/vendors', [BookVendorController::class, 'getAll']);
-    Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'vendors'], function () {
-        Route::post('/bulk', [BookVendorController::class, 'findBulk']);
-        Route::get('/private', [BookVendorController::class, 'getPrivate']);
-        Route::post('/private', [BookVendorController::class, 'createPrivate']);
-        Route::put('/private/{vendor}', [BookVendorController::class, 'updatePrivate']);
-        Route::delete('/private/{vendor}', [BookVendorController::class, 'deletePrivate']);
-        Route::post('/suggest', [BookVendorController::class, 'suggest']);
+    Route::get('/vendors', [VendorControllerV1::class, 'getAll'])->name('vendors.all');
+    Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'vendors', 'as' => 'vendors.'], function () {
+        Route::post('/bulk', [VendorControllerV1::class, 'findBulk'])->name('bulk');
+        Route::get('/private', [VendorControllerV1::class, 'getPrivate'])->name('private-all');
+        Route::post('/private', [VendorControllerV1::class, 'createPrivate'])->name('private-create');
+        Route::put('/private/{vendor}', [VendorControllerV1::class, 'updatePrivate'])->name('private-update');
+        Route::delete('/private/{vendor}', [VendorControllerV1::class, 'deletePrivate'])->name('private-destroy');
+        Route::post('/suggest', [VendorControllerV1::class, 'suggest'])->name('suggest');
     });
 
     Route::group(['middleware' => 'auth:sanctum', 'prefix' =>'collection', 'as' => 'collections.'], function () {
@@ -108,8 +110,6 @@ Route::group(['prefix' => 'v1', 'as' => 'v1.'], function () {
 /* API V2 */
 Route::group(['prefix' => 'v2', 'as' => 'v2.'], function () {
 
-    Route::post('/book/bulk', [BookController::class, 'findBulk'])->middleware(["auth:sanctum"])->name('book-bulk');
-    Route::get('/book/{book}', [BookController::class, 'find'])->name('book');
     Route::get('/isbn/{isbn}', [ISBNLookUpController::class, 'lookup'])->name('isbn');
 
     Route::group(['prefix' => 'auth', 'as' => 'auth.'], function () {
@@ -117,9 +117,7 @@ Route::group(['prefix' => 'v2', 'as' => 'v2.'], function () {
         Route::post('/register', [AuthControllerV2::class, 'register'])->name('register');
         Route::post('/password/forgot', [AuthControllerV2::class, 'forgotPassword'])->name('forgot-password');
         Route::post('/password/reset', [AuthControllerV2::class, 'resetPassword'])->name('reset-password');
-        Route::get('/verify/{user}/{email_crypted}/{token}', [UserControllerV2::class, 'confirmEmail'])->name('verify-email'); //110 included here
-
-        // Route::get('/email-change/{user}/{email_crypted}/{token}', [UserController::class, 'changeEmailConfirm']);
+        Route::get('/verify/{user}/{email_crypted}/{token}', [UserControllerV2::class, 'confirmEmail'])->name('verify-email');
     });
 
     Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'users', 'as' => 'users.'], function () {
@@ -130,6 +128,11 @@ Route::group(['prefix' => 'v2', 'as' => 'v2.'], function () {
         Route::post('/password', [UserControllerV2::class, 'changePassword'])->name('change-password');
         Route::post('/info', [UserControllerV2::class, 'changeInfo'])->name('change-info');
         Route::post('/logout', [AuthControllerV2::class, 'logout'])->name('logout');
+    });
+
+    Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'books', 'as' => 'books.'], function () {
+        Route::get('/{book_ids}', [BookControllerV2::class, 'findBulk'])->name('bulk');
+        Route::get('/{book}', [BookControllerV2::class, 'find'])->name('find');
     });
 
     // Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'report'], function () {
@@ -152,15 +155,21 @@ Route::group(['prefix' => 'v2', 'as' => 'v2.'], function () {
     //     Route::post('/unfollow/{user}', [FollowController::class, 'unfollow']);
     // });
 
-    // Route::get('/vendors', [BookVendorController::class, 'getAll']);
-    // Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'vendors'], function () {
-    //     Route::post('/bulk', [BookVendorController::class, 'findBulk']);
-    //     Route::get('/private', [BookVendorController::class, 'getPrivate']);
-    //     Route::post('/private', [BookVendorController::class, 'createPrivate']);
-    //     Route::put('/private/{vendor}', [BookVendorController::class, 'updatePrivate']);
-    //     Route::delete('/private/{vendor}', [BookVendorController::class, 'deletePrivate']);
-    //     Route::post('/suggest', [BookVendorController::class, 'suggest']);
-    // });
+    Route::group(['prefix' => 'vendors', 'as' => 'vendors.'], function (){
+        Route::get('/', [VendorControllerV2::class, 'all'])->name('all');
+
+        Route::group(['middleware' => 'auth:sanctum'], function () {
+            Route::post('/bulk/', [VendorControllerV2::class, 'bulk'])->name('bulk');
+            Route::post('/suggest', [VendorControllerV2::class, 'suggest'])->name('suggest');
+        });
+
+        Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'private', 'as' => 'private.'], function () {
+            Route::get('/', [VendorControllerV2::class, 'showPrivateVendors'])->name('show');
+            Route::post('/', [VendorControllerV2::class, 'createPrivateVendor'])->name('create');
+            Route::put('/{vendor}', [VendorControllerV2::class, 'updatePrivateVendor'])->name('update');
+            Route::delete('/{vendor}', [VendorControllerV2::class, 'destroyPrivateVendor'])->name('destroy');
+        });
+    });
 
     Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'collections', 'as' => 'collections.'], function () {
         Route::get('/', [CollectionControllerV2::class, 'all'])->name('all');
