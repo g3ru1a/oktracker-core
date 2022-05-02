@@ -64,11 +64,11 @@ class VendorTest extends TestCase
     public function test_get_bulk()
     {
         $data = [
-            "vendor_ids" => "[6,7,8,9]",
+            "vendor_ids" => json_encode(BookVendor::all()->pluck('id')->toArray()),
         ];
         $response = $this->authAs($this->user, $this->authVersion)->json("POST", $this->routes['bulk'], $data);
         $response->assertStatus(200);
-        $response->assertJsonCount(4, "data");
+        $response->assertJsonCount(5, "data");
     }
 
     /**

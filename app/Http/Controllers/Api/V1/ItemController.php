@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api\V1;
 
+use App\Http\Controllers\Controller;
 use App\Http\Requests\ItemRequest;
 use App\Http\Resources\ItemResource;
 use App\Models\BookVendor;
@@ -22,7 +23,7 @@ class ItemController extends Controller
     {
         if ($item->collection->user->id == auth()->user()->id) {
             return ItemResource::make($item);
-        } else return response()->json(['message' => 'Cannot access this resource.'], 401);
+        } else return response()->json(['message' => 'Cannot access this resource.'], 403);
     }
 
     /**
@@ -34,11 +35,11 @@ class ItemController extends Controller
     public function store(ItemRequest $request)
     {
         $collection = Collection::findOrFail($request->collection_id);
-        if($collection->user_id != auth()->user()->id){
-            return response()->json(['message' => 'Bad Request.'], 422);
+        if ($collection->user_id != auth()->user()->id) {
+            return response()->json(['message' => 'Bad Request.'], 403);
         }
         $vendor = BookVendor::findOrFail($request->vendor_id);
-        if($vendor->public == false && $vendor->user_id != auth()->user()->id){
+        if ($vendor->public == false && $vendor->user_id != auth()->user()->id) {
             return response()->json(['message' => 'Bad Request.'], 422);
         }
         try {
@@ -77,7 +78,7 @@ class ItemController extends Controller
             $collection->total_cost += $item->price;
             $collection->save();
             return ItemResource::make($item);
-        } else return response()->json(['message' => 'Cannot access this resource.'], 401);
+        } else return response()->json(['message' => 'Cannot access this resource.'], 403);
     }
 
     /**
@@ -91,13 +92,13 @@ class ItemController extends Controller
         if ($item->collection->user->id == auth()->user()->id) {
             $activity = SocialActivity::where('user_id', auth()->user()->id)
                 ->where('item_id', $item->id)->first();
-            $activity->delete();
+            if($activity) $activity->delete();
             $collection = $item->collection;
             $collection->total_cost -= $item->price;
             $collection->total_books -= 1;
             $collection->save();
             $item->delete();
             return ItemResource::make($item);
-        } else return response()->json(['message' => 'Cannot access this resource.'], 401);
+        } else return response()->json(['message' => 'Cannot access this resource.'], 403);
     }
 }

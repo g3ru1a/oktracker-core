@@ -7,9 +7,11 @@ use App\Http\Requests\BookVendorRequest;
 use App\Http\Requests\VendorBulkRequest;
 use App\Http\Resources\BookVendorResource;
 use App\Models\BookVendor;
+use App\Models\User;
 use App\Repositories\VendorRepositoryInterface;
 use Illuminate\Http\Request;
 use Auth;
+use Response;
 
 class VendorController extends Controller
 {
@@ -46,7 +48,6 @@ class VendorController extends Controller
         $this->vendorRepository->create($request->all(), Auth::user()->id);
         return response()->json(['message' => 'Book Vendor Request successfull'], 201);
     }
-
 
     public function showPrivateVendors()
     {

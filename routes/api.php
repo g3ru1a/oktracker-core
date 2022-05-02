@@ -3,7 +3,6 @@
 use App\Http\Controllers\BookVendorController;
 use App\Http\Controllers\FollowController;
 use App\Http\Controllers\ISBNLookUpController;
-use App\Http\Controllers\ItemController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SocialActivityController;
 use Illuminate\Support\Facades\Route;
@@ -14,12 +13,14 @@ use App\Http\Controllers\Api\V1\ApiAuthController as AuthControllerV1;
 use App\Http\Controllers\Api\V1\CollectionController as CollectionControllerV1;
 use App\Http\Controllers\Api\V1\BookController as BookControllerV1;
 use App\Http\Controllers\Api\V1\VendorController as VendorControllerV1;
+use App\Http\Controllers\Api\V1\ItemController as ItemControllerV1;
 
 use App\Http\Controllers\Api\V2\UserController as UserControllerV2;
 use App\Http\Controllers\Api\V2\AuthController as AuthControllerV2;
 use App\Http\Controllers\Api\V2\CollectionController as CollectionControllerV2;
 use App\Http\Controllers\Api\V2\BookController as BookControllerV2;
 use App\Http\Controllers\Api\V2\VendorController as VendorControllerV2;
+use App\Http\Controllers\Api\V2\ItemController as ItemControllerV2;
 
 /*
 |--------------------------------------------------------------------------
@@ -99,11 +100,11 @@ Route::group(['prefix' => 'v1', 'as' => 'v1.'], function () {
         Route::post('/destroy/{collection}', [CollectionControllerV1::class, 'destroy'])->name('destroy');
     });
 
-    Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'item'], function () {
-        Route::get('/find/{item}', [ItemController::class, 'find']);
-        Route::post('/add', [ItemController::class, 'store']);
-        Route::post('/update/{item}', [ItemController::class, 'update']);
-        Route::post('/destroy/{item}', [ItemController::class, 'destroy']);
+    Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'item', 'as' => 'items.'], function () {
+        Route::get('/find/{item}', [ItemControllerV1::class, 'find'])->name('find');
+        Route::post('/add', [ItemControllerV1::class, 'store'])->name('store');
+        Route::post('/update/{item}', [ItemControllerV1::class, 'update'])->name('update');
+        Route::post('/destroy/{item}', [ItemControllerV1::class, 'destroy'])->name('destroy');
     });
 });
 
@@ -135,6 +136,7 @@ Route::group(['prefix' => 'v2', 'as' => 'v2.'], function () {
         Route::get('/{book}', [BookControllerV2::class, 'find'])->name('find');
     });
 
+    //Not even implemented x.x
     // Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'report'], function () {
     //     Route::post('/book/{book}/', [ReportController::class, 'reportBookInfo']);
     //     Route::post('/series/{series}/', [ReportController::class, 'reportSeriesInfo']);
@@ -173,18 +175,17 @@ Route::group(['prefix' => 'v2', 'as' => 'v2.'], function () {
 
     Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'collections', 'as' => 'collections.'], function () {
         Route::get('/', [CollectionControllerV2::class, 'all'])->name('all');
-        // TODO: Move this -> Route::get('/{collection}/items/{page?}/{count?}', [CollectionControllerV2::class, 'items'])->name('items');
-
-        Route::post('/', [CollectionControllerV2::class, 'create'])->name('create');
+        Route::get('/{collection}/items/{page?}/{count?}', [CollectionControllerV2::class, 'items'])->name('items');
         Route::get('/{collection}', [CollectionControllerV2::class, 'show'])->name('show');
+        Route::post('/', [CollectionControllerV2::class, 'create'])->name('create');
         Route::put('/{collection}', [CollectionControllerV2::class, 'update'])->name('update');
         Route::delete('/{collection}', [CollectionControllerV2::class, 'destroy'])->name('destroy');
     });
 
-    // Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'item'], function () {
-    //     Route::get('/find/{item}', [ItemController::class, 'find']);
-    //     Route::post('/add', [ItemController::class, 'store']);
-    //     Route::post('/update/{item}', [ItemController::class, 'update']);
-    //     Route::post('/destroy/{item}', [ItemController::class, 'destroy']);
-    // });
+    Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'items', 'as' => 'items.'], function () {
+        Route::get('/{item}', [ItemControllerV2::class, 'find'])->name('find');
+        Route::post('/', [ItemControllerV2::class, 'create'])->name('create');
+        Route::put('/{item}', [ItemControllerV2::class, 'update'])->name('update');
+        Route::delete('/{item}', [ItemControllerV2::class, 'destroy'])->name('destroy');
+    });
 });

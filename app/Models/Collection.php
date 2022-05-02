@@ -29,4 +29,24 @@ class Collection extends Model
     public function items(){
         return $this->hasMany(Item::class);
     }
+
+    public function addedItem(Item $item){
+        $this->total_books += 1;
+        $this->total_cost += $item->price;
+        $this->save();
+    }
+
+    public function updatedItem(float $old_price, Item $item_new)
+    {
+        $this->total_cost -= $old_price;
+        $this->total_cost += $item_new->price;
+        $this->save();
+    }
+
+    public function removedItem(Item $item)
+    {
+        $this->total_books -= 1;
+        $this->total_cost -= $item->price;
+        $this->save();
+    }
 }

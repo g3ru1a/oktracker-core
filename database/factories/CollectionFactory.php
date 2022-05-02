@@ -15,8 +15,8 @@ class CollectionFactory extends Factory
     {
         return [
             'name' => $this->faker->name(),
-            'total_books' => 0,
-            'total_cost' => 0,
+            'total_books' => 9999,
+            'total_cost' => 9999,
             'currency' => $this->faker->currencyCode(),
         ];
     }

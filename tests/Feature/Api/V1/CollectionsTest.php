@@ -97,7 +97,7 @@ class CollectionsTest extends TestCase
         $response->assertStatus(401);
 
         $response = $this->authAs($this->otherUser, 'v1')->json("GET", $route);
-        $response->assertStatus(401);
+        $response->assertStatus(403);
     }
 
     /**

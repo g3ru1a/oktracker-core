@@ -19,7 +19,9 @@ class VendorController extends Controller
     {
         if (!isset($request->vendor_ids)) return response()->json(["Missing Vendor IDs"], 422);
         $vendor_ids = json_decode($request->vendor_ids);
+
         if (count($vendor_ids) > 100) return response()->json(["Too Many IDs"], 422);
+        
         $vendor_ids = array_unique($vendor_ids);
         $vendors = BookVendor::findMany($vendor_ids);
         return response()->json([

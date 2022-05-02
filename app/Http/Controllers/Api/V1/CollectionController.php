@@ -37,7 +37,7 @@ class CollectionController extends Controller
                 "items" => ItemResourceShort::collection($items),
                 "pagination" => $pagination_result
             ];
-        } else return response()->json(['message' => 'Cannot access this resource.'], 401);
+        } else return response()->json(['message' => 'Cannot access this resource.'], 403);
     }
 
     /**

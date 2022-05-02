@@ -5,6 +5,7 @@ namespace App\Policies;
 use App\Models\Collection;
 use App\Models\Role;
 use App\Models\User;
+use Collator;
 use Illuminate\Auth\Access\HandlesAuthorization;
 use Illuminate\Auth\Access\Response;
 
@@ -20,6 +21,14 @@ class CollectionPolicy
     public function __construct()
     {
         //
+    }
+
+    public function use(User $user, Collection $collection)
+    {
+        if ($collection->user->id != $user->id) {
+            return Response::deny("You do not own this collection.");
+        }
+        return Response::allow();
     }
 
     public function view(User $user, Collection $collection){

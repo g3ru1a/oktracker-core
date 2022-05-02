@@ -10,16 +10,19 @@ use App\Models\Collection;
 use App\Models\Item;
 use App\Models\Role;
 use App\Repositories\CollectionRepositoryInterface;
+use App\Repositories\ItemRepositoryInterface;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class CollectionController extends Controller
 {
     private CollectionRepositoryInterface $collectionRepository;
+    private ItemRepositoryInterface $itemRepository;
 
-    public function __construct(CollectionRepositoryInterface $collectionRepository)
+    public function __construct(CollectionRepositoryInterface $collectionRepository, ItemRepositoryInterface $itemRepository)
     {
         $this->collectionRepository = $collectionRepository;
+        $this->itemRepository = $itemRepository;
     }
 
     public function all()
@@ -30,7 +33,7 @@ class CollectionController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function show(Collection $collection)
     {
@@ -39,10 +42,30 @@ class CollectionController extends Controller
     }
 
     /**
+     * @param Collection $collection
+     * @param int $page
+     * @param int $count
+     * 
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function items(Collection $collection, $page = 1, $count = 500)
+    {
+        $this->authorize('use', $collection);
+
+        $data = $this->itemRepository->paginate($collection, $page, $count);
+
+        return response()->json([
+            "items" => ItemResourceShort::collection($data->items),
+            "pagination" => $data->pagination,
+        ]);
+    }
+
+
+    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function create(CollectionRequest $request)
     {
@@ -56,7 +79,7 @@ class CollectionController extends Controller
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\Collection  $collection
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function update(CollectionRequest $request, Collection $collection)
     {
@@ -69,7 +92,7 @@ class CollectionController extends Controller
      * Remove the specified resource from storage.
      *
      * @param  \App\Models\Collection  $collection
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function destroy(Collection $collection)
     {

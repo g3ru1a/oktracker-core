@@ -43,6 +43,14 @@ class BookVendorPolicy
         return in_array($user->role_id, [Role::ADMIN, Role::DATA_ANALYST]);
     }
 
+    public function use(User $user, BookVendor $vendor)
+    {
+        if ($vendor->public == false && $vendor->user_id != $user->id) {
+            return Response::deny("You do not have access to this vendor.");
+        }
+        return Response::allow();
+    }
+
     public function api_update(User $user, BookVendor $vendor)
     {
         if ($vendor->user_id == null || $vendor->user_id != $user->id) {
