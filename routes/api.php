@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\BookVendorController;
 use App\Http\Controllers\FollowController;
 use App\Http\Controllers\ISBNLookUpController;
 use App\Http\Controllers\ReportController;
@@ -137,24 +136,28 @@ Route::group(['prefix' => 'v2', 'as' => 'v2.'], function () {
     });
 
     //Not even implemented x.x
-    // Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'report'], function () {
-    //     Route::post('/book/{book}/', [ReportController::class, 'reportBookInfo']);
-    //     Route::post('/series/{series}/', [ReportController::class, 'reportSeriesInfo']);
+    //// Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'report'], function () {
+    ////     Route::post('/book/{book}/', [ReportController::class, 'reportBookInfo']);
+    ////     Route::post('/series/{series}/', [ReportController::class, 'reportSeriesInfo']);
+    //// });
+
+    // Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'social-activities', 'as' => 'social-activities.'], function () {
+        // Route::get('/{activity}/likes', [SocialActivityController::class, 'likes'])->name('likes'); //-- Possibly not needed?
+    //     Route::post('/{activity}/like', [SocialActivityController::class, 'like'])->name('like');
+    //     Route::delete('/{activity}/like', [SocialActivityController::class, 'unlike'])->name('unlike');
     // });
 
-    // Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'social'], function () {
-    //     Route::get('/activity/likes/{activity}', [SocialActivityController::class, 'likes']);
-    //     Route::post('/activity/like/{activity}', [SocialActivityController::class, 'likeActivity']);
-    //     Route::post('/activity/unlike/{activity}', [SocialActivityController::class, 'unlikeActivity']);
+    // Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'feed', 'as' => 'feed.'], function () {
+    //     Route::get('/global/{page?}/{count?}', [SocialActivityController::class, 'getGlobalFeed'])->name('global');
+    //     Route::get('/me/{page?}/{count?}', [SocialActivityController::class, 'getActivityFeed'])->name('personal');
+    //     Route::get('/{user}/{page?}/{count?}', [SocialActivityController::class, 'getUserActivity'])->name('user');
+    // });
 
-    //     Route::get('/activity/{page?}/{user?}/{count?}', [SocialActivityController::class, 'getUserActivity']);
-    //     Route::get('/global/feed/{page?}/{count?}', [SocialActivityController::class, 'getGlobalFeed']);
-    //     Route::get('/feed/{page?}/{count?}', [SocialActivityController::class, 'getActivityFeed']);
-
-    //     Route::get('/followers/{user?}', [FollowController::class, 'getFollowers']);
-    //     Route::get('/following/{user?}', [FollowController::class, 'getFollowing']);
-    //     Route::post('/follow/{user}', [FollowController::class, 'follow']);
-    //     Route::post('/unfollow/{user}', [FollowController::class, 'unfollow']);
+    // Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'users', 'as' => 'users.'], function () {
+    //     Route::get('/{user}/following', [FollowController::class, 'following'])->name('following');
+    //     Route::get('/{user}/followers', [FollowController::class, 'followers'])->name('followers');
+    //     Route::post('/{user}/follow', [FollowController::class, 'follow'])->name('follow');
+    //     Route::post('/{user}/unfollow', [FollowController::class, 'unfollow'])->name('unfollow');
     // });
 
     Route::group(['prefix' => 'vendors', 'as' => 'vendors.'], function (){
