@@ -35,6 +35,6 @@ class ConfirmEmailV2 extends Mailable
         return $this->view('mail.confirm-email-v2', [
             'user' => $this->user,
             'code' => $this->code
-        ]);
+        ])->subject('Registration Confirmation');
     }
 }
