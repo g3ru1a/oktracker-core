@@ -30,7 +30,7 @@ class UpdateUserDataTest extends TestCase
             'change-password' => route($ver . 'users.change-password'),
             'change-email' => route($ver . 'users.change-email'),
             'change-info' => route($ver . 'users.change-info'),
-            'x-verify-email' => $ver . 'auth.verify-email',
+            'x-verify-email' => $ver . 'auth.confirm-email',
         ];
 
         $user = User::factory()->create();

@@ -21,7 +21,7 @@ class AuthMail implements AuthMailInterface{
     public function registrationEmailConfirmation($user): bool
     {
         try {
-            Mail::mailer()->to($user->email)->send(new ConfirmEmail($user));
+            Mail::mailer()->to($user->email)->send(new ConfirmEmailV2($user));
             return true;
         } catch (Throwable $th) {
             return false;

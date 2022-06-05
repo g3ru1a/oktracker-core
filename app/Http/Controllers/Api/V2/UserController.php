@@ -76,10 +76,25 @@ class UserController extends Controller
      * @param string $token
      * @return JsonResponse
      */
-    public function confirmEmail(User $user, $email_crypted, $token): JsonResponse
+    public function confirmEmail(User $user, $token): JsonResponse
     {
-        $confirmed = $this->userRepository->confirmEmail($user, $email_crypted, $token);
+        $confirmed = $this->userRepository->confirmEmail($user, $token);
         if(!$confirmed) return response()->json([], 422);
+        return response()->json("Email Confirmed.");
+    }
+
+    /**
+     * Confirm email change for the specified user.
+     * 
+     * @param User $user
+     * @param string $email_crypted
+     * @param string $token
+     * @return JsonResponse
+     */
+    public function confirmEmailChange(User $user, $email_crypted, $token): JsonResponse
+    {
+        $confirmed = $this->userRepository->confirmEmail($user, $token, $email_crypted);
+        if (!$confirmed) return response()->json([], 422);
         return response()->json("Email Confirmed.");
     }
 

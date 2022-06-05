@@ -3,6 +3,7 @@
 namespace Tests\Feature\Api\V2;
 
 use App\Mail\ConfirmEmail;
+use App\Mail\ConfirmEmailV2;
 use App\Mail\PasswordReset;
 use App\Mail\PasswordResetNotif;
 use App\Models\User;
@@ -51,7 +52,7 @@ class AuthTest extends TestCase
         $response = $this->post($this->routes['register'], $data, $this->headers);
         $response->assertStatus(201);
 
-        Mail::assertSent(ConfirmEmail::class, function ($mail) {
+        Mail::assertSent(ConfirmEmailV2::class, function ($mail) {
             return $mail->hasTo('some@email.com');
         });
 

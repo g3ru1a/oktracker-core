@@ -21,7 +21,7 @@ interface UserRepositoryInterface
    public function updateProfilePicture($user, $image_path): User;
 
    public function updateToken($user, $token = null): User;
-   public function confirmEmail($user, $crypted_email, $token): bool;
+   public function confirmEmail($user, $token, $ence = null): bool;
 
    public function updatedInfoResponse($user): array;
 

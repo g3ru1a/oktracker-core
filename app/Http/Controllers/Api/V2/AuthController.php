@@ -31,7 +31,7 @@ class AuthController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => bcrypt($request->password),
-            'remember_token' => bin2hex(random_bytes(20))
+            'remember_token' => random_int(100000, 999999)
         ];
 
         $user = $this->userRepository->create($data);
@@ -66,14 +66,14 @@ class AuthController extends Controller
         return response(['message' => 'Logged out'], 200);
     }
 
-    public function verifyEmail(User $user, $token){
-        if($user->remember_token == $token){
-            $user->email_verified_at = Carbon::now();
-            $user->remember_token = null;
-            $user->save();
-            return redirect(route('open.app.login'));
-        }else return response()->json("Invalid Token", 422);
-    }
+    // public function verifyEmail(User $user, $token){
+    //     if($user->remember_token == $token){
+    //         $user->email_verified_at = Carbon::now();
+    //         $user->remember_token = null;
+    //         $user->save();
+    //         return redirect(route('open.app.login'));
+    //     }else return response()->json("Invalid Token", 422);
+    // }
 
     public function forgotPassword(ApiForgotPasswordRequest $request){
         $user = $this->userRepository->findByEmail($request->email);

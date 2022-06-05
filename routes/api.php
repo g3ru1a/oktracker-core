@@ -117,7 +117,8 @@ Route::group(['prefix' => 'v2', 'as' => 'v2.'], function () {
         Route::post('/register', [AuthControllerV2::class, 'register'])->name('register');
         Route::post('/password/forgot', [AuthControllerV2::class, 'forgotPassword'])->name('forgot-password');
         Route::post('/password/reset', [AuthControllerV2::class, 'resetPassword'])->name('reset-password');
-        Route::get('/verify/{user}/{email_crypted}/{token}', [UserControllerV2::class, 'confirmEmail'])->name('verify-email');
+        Route::get('/confirm/{user}/{email_crypted}/{token}', [UserControllerV2::class, 'confirmEmailChange'])->name('confirm-email');
+        Route::post('/verify/{user}/{token}', [UserControllerV2::class, 'confirmEmail'])->name('verify-email');
     });
 
     Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'users', 'as' => 'users.'], function () {

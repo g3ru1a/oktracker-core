@@ -94,11 +94,11 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
      * @param string $token
      * @return User
      */
-    public function confirmEmail($user, $crypted_email, $token): bool
+    public function confirmEmail($user, $token, $ence = null): bool
     {
         if ($user->remember_token == $token) {
             $user->email_verified_at = Carbon::now();
-            $user->email = Crypt::decryptString($crypted_email);
+            if($ence != null) $user->email = Crypt::decryptString($ence);
             $user->remember_token = null;
             $user->save();
             return true;
