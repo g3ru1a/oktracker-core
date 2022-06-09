@@ -21,6 +21,7 @@ use App\Http\Controllers\Api\V2\BookController as BookControllerV2;
 use App\Http\Controllers\Api\V2\VendorController as VendorControllerV2;
 use App\Http\Controllers\Api\V2\ItemController as ItemControllerV2;
 use App\Http\Controllers\Api\V2\FollowerController as FollowControllerV2;
+use App\Http\Controllers\Api\V2\SocialActivityController as SocialActivityControllerV2;
 
 /*
 |--------------------------------------------------------------------------
@@ -132,6 +133,7 @@ Route::group(['prefix' => 'v2', 'as' => 'v2.'], function () {
         Route::get('/followers/{user?}', [FollowControllerV2::class, 'getFollowers'])->name('followers');
         Route::post('/follow/{user}', [FollowControllerV2::class, 'toggleFollow'])->name('follow');
 
+        Route::post('/profile/{user}', [UserControllerV2::class, 'profile'])->name('profile');
         Route::get('/{user_id?}', [UserControllerV2::class, 'find'])->name('info');
         Route::get('/search/{query}/{page?}/{count?}', [UserControllerV2::class, 'search'])->name('search');
     });
@@ -141,23 +143,13 @@ Route::group(['prefix' => 'v2', 'as' => 'v2.'], function () {
         Route::get('/{book}', [BookControllerV2::class, 'find'])->name('find');
     });
 
-    //Not even implemented x.x
-    //// Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'report'], function () {
-    ////     Route::post('/book/{book}/', [ReportController::class, 'reportBookInfo']);
-    ////     Route::post('/series/{series}/', [ReportController::class, 'reportSeriesInfo']);
-    //// });
+    Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'feed', 'as' => 'feed.'], function () {
+        Route::post('/like/{activity}', [SocialActivityControllerV2::class, 'toggleLike'])->name('like');
 
-    // Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'social-activities', 'as' => 'social-activities.'], function () {
-        // Route::get('/{activity}/likes', [SocialActivityController::class, 'likes'])->name('likes'); //-- Possibly not needed?
-    //     Route::post('/{activity}/like', [SocialActivityController::class, 'like'])->name('like');
-    //     Route::delete('/{activity}/like', [SocialActivityController::class, 'unlike'])->name('unlike');
-    // });
-
-    // Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'feed', 'as' => 'feed.'], function () {
-    //     Route::get('/global/{page?}/{count?}', [SocialActivityController::class, 'getGlobalFeed'])->name('global');
-    //     Route::get('/me/{page?}/{count?}', [SocialActivityController::class, 'getActivityFeed'])->name('personal');
-    //     Route::get('/{user}/{page?}/{count?}', [SocialActivityController::class, 'getUserActivity'])->name('user');
-    // });
+        Route::get('/global/{page?}/{count?}', [SocialActivityControllerV2::class, 'getGlobalFeed'])->name('global');
+        Route::get('/me/{page?}/{count?}', [SocialActivityControllerV2::class, 'getActivityFeed'])->name('personal');
+        Route::get('/{user}/{page?}/{count?}', [SocialActivityControllerV2::class, 'getUserActivity'])->name('user');
+    });
 
     Route::group(['prefix' => 'vendors', 'as' => 'vendors.'], function (){
         Route::get('/', [VendorControllerV2::class, 'all'])->name('all');

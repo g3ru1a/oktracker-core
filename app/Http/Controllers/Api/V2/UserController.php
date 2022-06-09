@@ -10,9 +10,11 @@ use App\Http\Requests\UpdateUserInfoRequest;
 use App\Http\Resources\UserResource;
 use App\Http\Resources\UserResultResource;
 use App\Mail\AuthMailInterface;
+use App\Models\Collection;
 use App\Models\User;
 use App\Repositories\UserRepositoryInterface;
 use Auth;
+use Carbon\Carbon;
 use Hash;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
@@ -37,6 +39,37 @@ class UserController extends Controller
     {
         $user = $this->userRepository->find($user_id);
         return UserResource::make($user);
+    }
+
+    /**
+     * Find a user and return its profile resource
+     * 
+     * @param Integer|NULL $user_id 
+     * @return JSONResponse
+     */
+    public function profile($user): JSONResponse
+    {
+        $user = $this->userRepository->find($user);
+        $current_user = Auth::user();
+
+        $collections = Collection::where('user_id', $user->id)->get();
+        $total_books = 0;
+        foreach ($collections as $c) {
+            $total_books += $c->total_books;
+        }
+
+        $now = Carbon::now("UTC");
+        $acc_create = Carbon::createFromFormat("Y-m-d H:i:s", $user->created_at, "UTC");
+        $days_diff = $acc_create->diffInDays($now) + 1;
+
+        return response()->json([
+            "data" => [
+                "user" => UserResultResource::make($user),
+                "followed" => $current_user->isFollowing($user),
+                "total_books" => $total_books,
+                "days_collecting" => $days_diff,
+            ]
+        ]);
     }
 
     /**
