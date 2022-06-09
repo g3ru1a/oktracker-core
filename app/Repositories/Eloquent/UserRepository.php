@@ -2,6 +2,7 @@
 
 namespace App\Repositories\Eloquent;
 
+use App\Models\Follower;
 use App\Models\User;
 use App\Repositories\UserRepositoryInterface;
 use Auth;
@@ -140,5 +141,71 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
             'user' => $user,
             'token' => $token
         ];
+    }
+
+    /**
+     * @param User $user
+     * @return Collection
+     */
+    public function getFollowers($user = null): Collection
+    {
+        if ($user == null) $user = Auth::user();
+        return $user->followers;
+    }
+
+    /**
+     * @param User $user
+     * @return Collection
+     */
+    public function getFollows($user = null): Collection
+    {
+        if ($user == null) $user = Auth::user();
+        return $user->follows;
+    }
+
+    /**
+     * @param User $user
+     * @return Collection
+     */
+    public function toggleFollow(User $user)
+    {
+        $current_user = Auth::user();
+        if($current_user->isFollowing($user)){
+            $follow = Follower::where("user_id", auth()->user()->id)
+            ->where("follow_id", $user->id)->first();
+            $follow->delete();
+        }else{
+            $follow = Follower::create([
+                "user_id" => auth()->user()->id,
+                "follow_id" => $user->id
+            ]);
+        }
+        return $follow;
+    }
+
+    /**
+     * @param string $query
+     * @param string $page Default 1
+     * @param string $count Default 20
+     * 
+     * @return Collection
+     */
+    public function search($query, $page, $count): Collection
+    {
+        $users = User::where("name", "LIKE", "%" . $query . "%")
+            ->skip($count * ($page - 1))->take($count)->get();
+        return $users;
+    }
+
+    /**
+     * @param string $query
+     * @param string $page Default 1
+     * @param string $count Default 20
+     * 
+     * @return int
+     */
+    public function searchMaxPages($query, $page, $count): int
+    {
+        return ceil(User::where("name", "LIKE", "%" . $query . "%")->count() / $count);
     }
 }

@@ -8,6 +8,7 @@ use App\Http\Requests\ChangeEmailRequest;
 use App\Http\Requests\ChangePasswordRequest;
 use App\Http\Requests\UpdateUserInfoRequest;
 use App\Http\Resources\UserResource;
+use App\Http\Resources\UserResultResource;
 use App\Mail\AuthMailInterface;
 use App\Models\User;
 use App\Repositories\UserRepositoryInterface;
@@ -117,6 +118,33 @@ class UserController extends Controller
     }
 
     /**
+     * Update authenticated user's name and optionally Profile Picture
+     * 
+     * @param string $query
+     * @param string $page Default 1
+     * @param string $count Default 20
+     * 
+     * @return JsonResponse
+     */
+    public function search($query, $page = 1, $count = 20)
+    {
+        $users = $this->userRepository->search($query, $page, $count);
+        $max_pages = $this->userRepository->searchMaxPages($query, $page, $count);
+
+        $pagination_result = [
+            "max_pages" => $max_pages,
+            "prev_page" => ($page > 1) ? $page - 1 : null,
+            "next_page" => ($page + 1 <= $max_pages) ? $page + 1 : null,
+        ];
+        return response()->json([
+            "data" => [
+                "users" => UserResultResource::collection($users),
+                "pagination" => $pagination_result
+            ]
+        ]);
+    }
+
+    /**
      * Generate a new auth token and format the JsonResponse
      * 
      * @param User $user
@@ -131,4 +159,5 @@ class UserController extends Controller
         ];
         return response()->json($response);
     }
+
 }

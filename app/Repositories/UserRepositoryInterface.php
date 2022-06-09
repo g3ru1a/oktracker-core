@@ -24,6 +24,11 @@ interface UserRepositoryInterface
    public function confirmEmail($user, $token, $ence = null): bool;
 
    public function updatedInfoResponse($user): array;
-
    
+   public function getFollowers($user = null): Collection;
+   public function getFollows($user = null): Collection;
+   public function toggleFollow(User $user);
+
+   public function search($query, $page, $count): Collection;
+   public function searchMaxPages($query, $page, $count): int;
 }

@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\FollowController;
 use App\Http\Controllers\ISBNLookUpController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SocialActivityController;
@@ -13,6 +12,7 @@ use App\Http\Controllers\Api\V1\CollectionController as CollectionControllerV1;
 use App\Http\Controllers\Api\V1\BookController as BookControllerV1;
 use App\Http\Controllers\Api\V1\VendorController as VendorControllerV1;
 use App\Http\Controllers\Api\V1\ItemController as ItemControllerV1;
+use App\Http\Controllers\Api\V1\FollowController as FollowControllerV1;
 
 use App\Http\Controllers\Api\V2\UserController as UserControllerV2;
 use App\Http\Controllers\Api\V2\AuthController as AuthControllerV2;
@@ -20,6 +20,7 @@ use App\Http\Controllers\Api\V2\CollectionController as CollectionControllerV2;
 use App\Http\Controllers\Api\V2\BookController as BookControllerV2;
 use App\Http\Controllers\Api\V2\VendorController as VendorControllerV2;
 use App\Http\Controllers\Api\V2\ItemController as ItemControllerV2;
+use App\Http\Controllers\Api\V2\FollowerController as FollowControllerV2;
 
 /*
 |--------------------------------------------------------------------------
@@ -56,7 +57,7 @@ Route::group(['prefix' => 'v1', 'as' => 'v1.'], function () {
 
     Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'user'], function () {
         Route::get('/{user_id?}', [UserControllerV1::class, 'find']);
-        Route::get('/search/{query}/{page?}/{count?}', [FollowController::class, 'searchUsers']);
+        Route::get('/search/{query}/{page?}/{count?}', [FollowControllerV1::class, 'searchUsers']);
     });
 
     Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'report'], function () {
@@ -73,10 +74,10 @@ Route::group(['prefix' => 'v1', 'as' => 'v1.'], function () {
         Route::get('/global/feed/{page?}/{count?}', [SocialActivityController::class, 'getGlobalFeed']);
         Route::get('/feed/{page?}/{count?}', [SocialActivityController::class, 'getActivityFeed']);
 
-        Route::get('/followers/{user?}', [FollowController::class, 'getFollowers']);
-        Route::get('/following/{user?}', [FollowController::class, 'getFollowing']);
-        Route::post('/follow/{user}', [FollowController::class, 'follow']);
-        Route::post('/unfollow/{user}', [FollowController::class, 'unfollow']);
+        Route::get('/followers/{user?}', [FollowControllerV1::class, 'getFollowers']);
+        Route::get('/following/{user?}', [FollowControllerV1::class, 'getFollowing']);
+        Route::post('/follow/{user}', [FollowControllerV1::class, 'follow']);
+        Route::post('/unfollow/{user}', [FollowControllerV1::class, 'unfollow']);
     });
 
     Route::get('/vendors', [VendorControllerV1::class, 'getAll'])->name('vendors.all');
@@ -122,13 +123,17 @@ Route::group(['prefix' => 'v2', 'as' => 'v2.'], function () {
     });
 
     Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'users', 'as' => 'users.'], function () {
-        Route::get('/{user_id?}', [UserControllerV2::class, 'find'])->name('info');
-        Route::get('/{query}/{page?}/{count?}', [FollowController::class, 'searchUsers'])->name('search');
-
         Route::post('/email', [UserControllerV2::class, 'changeEmail'])->name('change-email');
         Route::post('/password', [UserControllerV2::class, 'changePassword'])->name('change-password');
         Route::post('/info', [UserControllerV2::class, 'changeInfo'])->name('change-info');
         Route::post('/logout', [AuthControllerV2::class, 'logout'])->name('logout');
+
+        Route::get('/follows/{user?}', [FollowControllerV2::class, 'getFollows'])->name('follows');
+        Route::get('/followers/{user?}', [FollowControllerV2::class, 'getFollowers'])->name('followers');
+        Route::post('/follow/{user}', [FollowControllerV2::class, 'toggleFollow'])->name('follow');
+
+        Route::get('/{user_id?}', [UserControllerV2::class, 'find'])->name('info');
+        Route::get('/search/{query}/{page?}/{count?}', [UserControllerV2::class, 'search'])->name('search');
     });
 
     Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'books', 'as' => 'books.'], function () {
@@ -152,13 +157,6 @@ Route::group(['prefix' => 'v2', 'as' => 'v2.'], function () {
     //     Route::get('/global/{page?}/{count?}', [SocialActivityController::class, 'getGlobalFeed'])->name('global');
     //     Route::get('/me/{page?}/{count?}', [SocialActivityController::class, 'getActivityFeed'])->name('personal');
     //     Route::get('/{user}/{page?}/{count?}', [SocialActivityController::class, 'getUserActivity'])->name('user');
-    // });
-
-    // Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'users', 'as' => 'users.'], function () {
-    //     Route::get('/{user}/following', [FollowController::class, 'following'])->name('following');
-    //     Route::get('/{user}/followers', [FollowController::class, 'followers'])->name('followers');
-    //     Route::post('/{user}/follow', [FollowController::class, 'follow'])->name('follow');
-    //     Route::post('/{user}/unfollow', [FollowController::class, 'unfollow'])->name('unfollow');
     // });
 
     Route::group(['prefix' => 'vendors', 'as' => 'vendors.'], function (){

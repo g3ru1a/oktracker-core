@@ -97,6 +97,19 @@ class User extends Authenticatable
         return $this->belongsToMany(User::class, 'followers', 'user_id', 'follow_id')->whereNull("deleted_at");
     }
 
+    // Get all users we are following
+    public function follows()
+    {
+        return $this->belongsToMany(User::class, 'followers', 'user_id', 'follow_id')->whereNull("deleted_at");
+    }
+
+    public function isFollowing(User $user){
+        $follow_data = Follower::where("user_id", $this->id)
+            ->where("follow_id", $user->id)->first();
+        if($follow_data) return true;
+        else return false;
+    }
+
     public function liked(){
         return $this->hasMany(Like::class);
     }
