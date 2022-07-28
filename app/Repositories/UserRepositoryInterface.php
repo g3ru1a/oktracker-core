@@ -12,7 +12,7 @@ interface UserRepositoryInterface
    /**
     * @return User|null
     */
-   public function findByEmail($email): User|null;
+   public function findByEmail($email);
    public function create(array $attributes): User;
 
    public function updatePassword($user, $new_password): ?User;
